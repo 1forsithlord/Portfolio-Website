@@ -1,0 +1,130 @@
+# Portfolio site
+
+A single-page, vanilla HTML/CSS/JS portfolio that pulls your GitHub repos live
+and animates everything with [Anime.js](https://animejs.com/). No build step —
+just open `index.html` in a browser.
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `index.html` | Page structure |
+| `styles.css` | All styling, including the color/font design tokens |
+| `script.js` | GitHub fetch, animations, modals, dark mode, form validation |
+| `projects.json` | Optional: attach a video demo / custom copy to specific repos |
+| `README.md` | This file |
+
+## 1. Set your GitHub username
+
+Open `script.js` and change the first line:
+
+```js
+const GITHUB_USERNAME = "YOUR_GITHUB_USERNAME"; // <-- change this
+```
+
+The site fetches `https://api.github.com/users/<username>/repos?sort=updated&per_page=100`,
+drops forks and repos with no description, sorts what's left by star count, and
+shows the top 6. Results are cached in `localStorage` for 1 hour so repeat
+visits don't hit GitHub's (unauthenticated) rate limit of 60 requests/hour.
+
+## 2. Add video demos (optional)
+
+Edit `projects.json`. Key each entry by the exact repo name:
+
+```json
+{
+  "my-cool-app": {
+    "videoId": "dQw4w9WgXcQ",
+    "description": "Optional override for the card/modal description.",
+    "stack": ["React", "Node.js", "PostgreSQL"]
+  }
+}
+```
+
+- `videoId` is the part of a YouTube URL after `watch?v=`. Any repo with a
+  `videoId` gets a "Watch demo" button that opens an embedded player in a modal.
+- `description` and `stack` are optional — if omitted, the card falls back to
+  the repo's GitHub description and primary language.
+- Repos not listed in `projects.json` still display fine, just without a video.
+
+If `projects.json` is missing (or blocked, e.g. when opening `index.html`
+directly via `file://` in some browsers), the site silently falls back to
+GitHub-only data.
+
+## 3. Replace placeholder content
+
+Search `index.html` for:
+- **Bio paragraphs** in the About section
+- **Social links** in the nav — add your LinkedIn / Twitter URLs (a commented-out
+  example sits next to the GitHub link)
+- **Résumé entries** in the résumé modal at the bottom of the file (add your
+  school, dates and any internships)
+- **Photo** — `MYPHOTO.jpeg`
+- The About stats, language chips, "currently building" panel and heatmap are
+  **filled in live from GitHub** — nothing to edit there.
+- For link previews when you share the site, add an absolute `og:image` URL in
+  the `<head>` after you deploy (there's a comment showing where).
+
+## 4. Colors & fonts
+
+Everything lives in CSS custom properties at the top of `styles.css`:
+
+```css
+:root {
+  --bg: #0b0d10;
+  --accent: #e8823a;
+  --font-head: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  ...
+}
+```
+
+Change these tokens to restyle the whole site. (There is no light theme — the
+site is dark only.)
+
+## 5. Contact form
+
+The form validates client-side (name required, valid email pattern, message
+length). To make it actually send, create a free endpoint at Formspree, Getform
+or Web3Forms and paste its URL into `FORM_ENDPOINT` near the top of `script.js`:
+
+```js
+const FORM_ENDPOINT = "https://formspree.io/f/xxxxxxx";
+```
+
+While `FORM_ENDPOINT` is empty, the form tells visitors it isn't connected yet
+instead of pretending the message was sent.
+
+## 6. Deploying
+
+Since there's no build step, you can drop these files straight onto GitHub
+Pages, Netlify, Vercel, or any static host. Just make sure `projects.json`
+gets served alongside `index.html` (i.e. don't rename or move it without
+updating the `fetch("projects.json")` call in `script.js`).
+
+## 7. Galaxy, command palette & terminal
+
+- **Galaxy** (`initHeroGalaxy` in `script.js`): one fixed WebGL layer behind every
+  page. On Home you can drag to rotate, scroll/pinch to zoom, double-click to
+  reset. Leaving Home flies the camera into it; on other pages it dims and drifts.
+  Hovering a project card tints it with that repo's language colour and speeds it
+  up. Tunables are at the top of the function (`DIST_DEFAULT`, `BG_DIST`,
+  `PARTICLES`, ...). The old F1-car background is kept in the HTML but no longer
+  started — uncomment `initF1Car()` and remove the `.site-bg { display: none }`
+  rule to bring it back.
+- **Command palette:** `Ctrl/⌘ + K` anywhere — jump to pages, open projects,
+  open the résumé, reset the galaxy.
+- **Terminal** on the About page: `help`, `whoami`, `ls`, `open <project>`,
+  `skills`, `git log`, `goto <page>`, `galaxy reset|warp`, `clear`. Edit the
+  `whoami` text in `initTerminal()` in `script.js`.
+- **GitHub panel:** latest commit + a 13-week activity heatmap from GitHub's
+  public events feed. It only sees *public* activity, and GitHub only exposes
+  recent events, so very old days show as dashed "unknown" cells.
+
+## Notes
+
+- Respects `prefers-reduced-motion`: entrance/scroll animations are skipped
+  and content just appears in place.
+- GitHub responses are cached in `localStorage` (repos 1 h, activity 30 min).
+- "Download PDF" on the résumé modal uses `window.print()` — most browsers'
+  print dialog has a "Save as PDF" destination, which keeps this dependency-free.
