@@ -1,0 +1,101 @@
+/*
+  Design tokens.
+  The only file allowed to contain raw colors, raw z-index numbers and raw
+  durations. Everything else must use var(--token).
+
+  Breakpoints (custom properties cannot be used in @media, so they are
+  documented here): 640px, 900px, 1200px. Write base CSS for 360px first and
+  add min-width queries.
+
+  The type scale is added in MVP-2 step 2.2. Only font families live here now.
+*/
+:root {
+  /* color: surfaces and text */
+  --color-bg: #06050d;
+  --color-surface: #14102b;
+  --color-surface-raised: #1c1740;
+  --color-text: #ece9f7;
+  --color-text-muted: #aaa6c8;
+  --color-line: rgba(190, 180, 255, 0.16);
+
+  /* color: accents */
+  --color-accent: #ff9ccf;
+  --color-accent-soft: rgba(255, 156, 207, 0.16);
+  --color-accent-ink: #1d0a22;
+  --color-violet: #9d8cff;
+  --color-apricot: #ffc29a;
+  --color-lagoon: #7ee8e0;
+  --color-focus: var(--color-violet);
+
+  /* page background gradient (used on every route except the galaxy home) */
+  --glow-violet: rgba(157, 140, 255, 0.22);
+  --glow-pink: rgba(255, 143, 199, 0.16);
+  --gradient-page:
+    radial-gradient(60rem 40rem at 15% -10%, var(--glow-violet), transparent 60%),
+    radial-gradient(50rem 36rem at 90% 0%, var(--glow-pink), transparent 55%);
+
+  /* glass */
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --shadow-glass: 0 24px 64px rgba(0, 0, 0, 0.4);
+  --blur-soft: 12px;
+  --blur-strong: 24px;
+  --saturate-soft: 120%;
+  --saturate-strong: 140%;
+  --backdrop-soft: blur(var(--blur-soft)) saturate(var(--saturate-soft));
+  --backdrop-strong: blur(var(--blur-strong)) saturate(var(--saturate-strong));
+
+  /* fonts (the type scale arrives in step 2.2) */
+  --font-display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
+  --font-body: "Manrope", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  /* layout */
+  --nav-height: 4rem;
+  --measure: 74ch;
+  --container-max: 68.75rem;
+
+  /* z-index layers */
+  --z-canvas: 0;
+  --z-content: 10;
+  --z-tags: 20;
+  --z-nav: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+
+  /* motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+  --duration-scene: 700ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* One place that honors reduced motion for every CSS transition. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+    --duration-scene: 0ms;
+  }
+}

@@ -1,19 +1,23 @@
 ---
+import BaseLayout from "@/layouts/BaseLayout.astro";
 import { HelloIsland } from "@/components/islands/HelloIsland";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Yash Pratap Singh — rebuild preview</title>
-  </head>
-  <body>
-    <main>
-      <h1>Yash Pratap Singh</h1>
-      <p>Rebuild scaffold. Nothing here is final.</p>
-      <HelloIsland client:load />
-    </main>
-  </body>
-</html>
+<BaseLayout title="Yash Pratap Singh — rebuild preview">
+  <main>
+    <h1>Yash Pratap Singh</h1>
+    <p>Rebuild scaffold. Nothing here is final.</p>
+    <HelloIsland client:load />
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+</style>
