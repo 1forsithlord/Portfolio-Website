@@ -1,0 +1,65 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProjectCard from "@/components/projects/ProjectCard.astro";
+import { projects } from "@/content/projects";
+
+const featured = projects.filter((project) => project.featured);
+const more = projects.filter((project) => !project.featured);
+---
+
+<BaseLayout title="Projects — Yash Pratap Singh">
+  <main>
+    <h1>Projects</h1>
+
+    <section aria-labelledby="featured-heading">
+      <h2 id="featured-heading">Featured</h2>
+      <ul class="grid">
+        {
+          featured.map((project) => (
+            <li>
+              <ProjectCard project={project} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      more.length > 0 && (
+        <section aria-labelledby="more-heading">
+          <h2 id="more-heading">More</h2>
+          <ul class="grid">
+            {more.map((project) => (
+              <li>
+                <ProjectCard project={project} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-12);
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  section {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-6);
+    list-style: none;
+    padding: 0;
+  }
+</style>
