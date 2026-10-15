@@ -1,0 +1,125 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+---
+
+<BaseLayout title="Galaxy renderer — temporary dev page">
+  <div id="galaxy" class="stage"></div>
+  <main>
+    <GlassPanel>
+      <h1>Galaxy renderer</h1>
+      <p class="note">Temporary dev page. Renderer only: no scroll, no input, no performance tiers yet.</p>
+      <p id="status" role="status">Starting…</p>
+    </GlassPanel>
+  </main>
+</BaseLayout>
+
+<script>
+  import { createGalaxyRenderer } from "@/lib/galaxy/renderer";
+  import { makePlanets } from "@/lib/galaxy/planets";
+  import type { Camera, FrameState } from "@/lib/galaxy/types";
+
+  const container = document.getElementById("galaxy");
+  const status = document.getElementById("status");
+
+  if (container && status) {
+    const small = window.innerWidth < 700;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const renderer = createGalaxyRenderer(container, {
+      particles: small ? 50000 : 130000,
+      stars: small ? 5000 : 9000,
+      dpr,
+    });
+
+    if (!renderer) {
+      status.textContent = "WebGL is not available here. The page stays a plain gradient.";
+    } else {
+      const planets = makePlanets(6);
+      const cam: Camera = {
+        yaw: 0,
+        pitch: 1.0,
+        dist: 4.4,
+        sx: 0,
+        sy: 0,
+        tx: 0,
+        ty: 0,
+        tz: 0,
+        open: 1,
+        stars: 0.9,
+      };
+      const state: FrameState = {
+        t: 0,
+        cam,
+        tint: [1, 1, 1],
+        tintAmt: 0,
+        count: renderer.particles,
+        planets,
+        pAmt: 1,
+      };
+
+      const info = `${renderer.particles} particles, dpr ${dpr}, ${planets.length} planets`;
+      const start = performance.now();
+      let frames = 0;
+      let mark = start;
+
+      const frame = (now: number) => {
+        state.t = (now - start) / 1000;
+        cam.yaw = state.t * 0.05;
+        renderer.draw(state);
+        frames += 1;
+        if (now - mark > 500) {
+          status.textContent = `${info}, ${Math.round((frames * 1000) / (now - mark))} fps`;
+          frames = 0;
+          mark = now;
+        }
+        requestAnimationFrame(frame);
+      };
+
+      if (reduceMotion) {
+        // One still frame, redrawn only when the window size changes.
+        state.t = 4;
+        const still = () => {
+          renderer.resize();
+          renderer.draw(state);
+        };
+        still();
+        status.textContent = `${info}, reduced motion: still frame`;
+        window.addEventListener("resize", still);
+      } else {
+        window.addEventListener("resize", () => renderer.resize());
+        requestAnimationFrame(frame);
+      }
+    }
+  }
+</script>
+
+<style>
+  .stage {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-canvas);
+  }
+
+  main {
+    position: relative;
+    z-index: var(--z-content);
+    display: grid;
+    max-width: 28rem;
+    margin: var(--space-12) var(--space-4);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .note {
+    color: var(--color-text-muted);
+  }
+
+  #status {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+  }
+</style>
