@@ -1,0 +1,48 @@
+---
+interface Props {
+  as?: "div" | "article" | "section";
+  strength?: "soft" | "strong";
+}
+
+const { as: Element = "div", strength = "soft" } = Astro.props;
+
+// Two elements on purpose. The outer element is the one a parent may transform
+// (rotate, scale, translate). The inner element owns backdrop-filter. Keeping
+// them apart avoids the Safari bug where backdrop-filter breaks inside a
+// 3D-transformed element.
+---
+
+<Element class="glass" data-strength={strength}>
+  <div class="surface">
+    <slot />
+  </div>
+</Element>
+
+<style>
+  .glass {
+    height: 100%;
+  }
+
+  .surface {
+    height: 100%;
+    padding: var(--space-6);
+    color: var(--color-text);
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass);
+    -webkit-backdrop-filter: var(--backdrop-soft);
+    backdrop-filter: var(--backdrop-soft);
+  }
+
+  .glass[data-strength="strong"] .surface {
+    -webkit-backdrop-filter: var(--backdrop-strong);
+    backdrop-filter: var(--backdrop-strong);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .surface {
+      background: var(--color-surface);
+    }
+  }
+</style>

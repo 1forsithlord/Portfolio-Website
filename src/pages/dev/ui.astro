@@ -1,0 +1,95 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Button from "@/components/ui/Button.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import Tag from "@/components/ui/Tag.astro";
+---
+
+<BaseLayout title="UI primitives — temporary dev page">
+  <main>
+    <SectionHeader
+      level={1}
+      eyebrow="Temporary dev page"
+      title="UI primitives"
+      description="Removed before promotion to main."
+    />
+
+    <section>
+      <SectionHeader title="Button" />
+      <div class="row">
+        <Button variant="primary" href="/projects">Primary link</Button>
+        <Button href="/contact">Secondary link</Button>
+        <Button variant="primary" size="sm">Small primary</Button>
+        <Button size="sm">Small secondary</Button>
+        <Button variant="primary" disabled>Disabled</Button>
+        <Button href="https://github.com" external size="sm">External</Button>
+      </div>
+    </section>
+
+    <section>
+      <SectionHeader title="Tag" />
+      <div class="row">
+        <Tag>Python</Tag>
+        <Tag>Pygame</Tag>
+        <Tag tone="accent">Machine learning</Tag>
+        <Tag tone="accent">Full-stack</Tag>
+      </div>
+    </section>
+
+    <section>
+      <SectionHeader title="GlassPanel" level={2} description="Soft and strong blur over a bright band." />
+      <div class="stripe">
+        <GlassPanel>
+          <p>Soft glass</p>
+        </GlassPanel>
+        <GlassPanel strength="strong">
+          <p>Strong glass</p>
+        </GlassPanel>
+      </div>
+    </section>
+
+    <section>
+      <SectionHeader title="SectionHeader levels" level={2} />
+      <SectionHeader level={1} eyebrow="Eyebrow" title="Level 1" description="A description line." />
+      <SectionHeader level={2} title="Level 2" />
+      <SectionHeader level={3} title="Level 3" />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-12);
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  section {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .stripe {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-6);
+    padding: var(--space-12) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(
+      90deg,
+      var(--color-accent),
+      var(--color-violet),
+      var(--color-lagoon),
+      var(--color-apricot)
+    );
+  }
+</style>
