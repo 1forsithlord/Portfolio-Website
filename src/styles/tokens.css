@@ -7,7 +7,8 @@
   documented here): 640px, 900px, 1200px. Write base CSS for 360px first and
   add min-width queries.
 
-  The type scale is added in MVP-2 step 2.2. Only font families live here now.
+  Type scale: --text-* sizes (fluid, clamp) and --leading-* line heights.
+  Components must use these. No raw font-size values outside this file.
 */
 :root {
   /* color: surfaces and text */
@@ -45,10 +46,23 @@
   --backdrop-soft: blur(var(--blur-soft)) saturate(var(--saturate-soft));
   --backdrop-strong: blur(var(--blur-strong)) saturate(var(--saturate-strong));
 
-  /* fonts (the type scale arrives in step 2.2) */
+  /* fonts */
   --font-display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
   --font-body: "Manrope", "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* type scale: fixed small sizes, fluid large sizes (360px to 1200px) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --text-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+  --text-2xl: clamp(1.75rem, 1.4rem + 1.7vw, 2.5rem);
+  --text-3xl: clamp(2.25rem, 1.6rem + 3.2vw, 3.5rem);
+  --text-hero: clamp(3rem, 1.5rem + 7.5vw, 6.5rem);
+  --leading-tight: 1.05;
+  --leading-snug: 1.25;
+  --leading-body: 1.6;
 
   /* spacing (4px base) */
   --space-1: 0.25rem;

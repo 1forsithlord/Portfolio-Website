@@ -1,0 +1,62 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const steps = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "hero"] as const;
+---
+
+<BaseLayout title="Type scale — temporary dev page">
+  <main>
+    <h1>Type scale</h1>
+    <p class="note">Temporary. Resize the window: large sizes scale, small ones stay fixed.</p>
+    <ul>
+      {
+        steps.map((step) => (
+          <li>
+            <code>--text-{step}</code>
+            <span class="sample" style={`font-size: var(--text-${step})`}>Machine learning, shipped</span>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-6);
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  .note {
+    color: var(--color-text-muted);
+  }
+
+  ul {
+    display: grid;
+    gap: var(--space-4);
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    display: grid;
+    gap: var(--space-1);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .sample {
+    font-family: var(--font-display);
+    line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+</style>
