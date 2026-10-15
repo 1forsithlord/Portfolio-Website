@@ -1,0 +1,77 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import Button from "@/components/ui/Button.astro";
+---
+
+<BaseLayout title="Contact — Yash Pratap Singh">
+  <main>
+    <SectionHeader
+      level={1}
+      title="Get in touch"
+      description="Have a project in mind, or just want to talk shop? Send a note — I read everything that comes through here."
+    />
+    <p class="notice">The form is not connected yet in this rebuild.</p>
+    <GlassPanel>
+      <form>
+        <fieldset disabled>
+          <legend class="visually-hidden">Contact form</legend>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" autocomplete="name" />
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" />
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5"></textarea>
+          <div class="actions">
+            <Button variant="primary" type="submit" disabled>Send message</Button>
+          </div>
+        </fieldset>
+      </form>
+    </GlassPanel>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-6);
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  .notice {
+    color: var(--color-apricot);
+  }
+
+  fieldset {
+    display: grid;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+  }
+
+  .actions {
+    justify-self: start;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

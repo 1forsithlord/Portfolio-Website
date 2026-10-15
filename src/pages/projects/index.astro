@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ProjectCard from "@/components/projects/ProjectCard.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
 import { projects } from "@/content/projects";
 
 const featured = projects.filter((project) => project.featured);
@@ -9,10 +10,10 @@ const more = projects.filter((project) => !project.featured);
 
 <BaseLayout title="Projects — Yash Pratap Singh">
   <main>
-    <h1>Projects</h1>
+    <SectionHeader level={1} title="Projects" />
 
     <section aria-labelledby="featured-heading">
-      <h2 id="featured-heading">Featured</h2>
+      <SectionHeader id="featured-heading" title="Featured" />
       <ul class="grid">
         {
           featured.map((project) => (
@@ -27,7 +28,7 @@ const more = projects.filter((project) => !project.featured);
     {
       more.length > 0 && (
         <section aria-labelledby="more-heading">
-          <h2 id="more-heading">More</h2>
+          <SectionHeader id="more-heading" title="More" />
           <ul class="grid">
             {more.map((project) => (
               <li>

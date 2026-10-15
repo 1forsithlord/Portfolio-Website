@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Button from "@/components/ui/Button.astro";
 import { site } from "@/content/site";
 ---
 
@@ -7,10 +8,10 @@ import { site } from "@/content/site";
   <main>
     <h1>{site.name}</h1>
     <p class="pitch">{site.tagline}</p>
-    <p class="actions">
-      <a class="primary" href="/projects">View projects</a>
-      <a class="secondary" href="/contact">Contact me</a>
-    </p>
+    <div class="actions">
+      <Button variant="primary" href="/projects">View projects</Button>
+      <Button href="/contact">Contact me</Button>
+    </div>
   </main>
 </BaseLayout>
 
@@ -42,27 +43,5 @@ import { site } from "@/content/site";
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
-  }
-
-  .primary,
-  .secondary {
-    padding: var(--space-3) var(--space-6);
-    text-decoration: none;
-    border-radius: var(--radius-pill);
-  }
-
-  .primary {
-    font-weight: 600;
-    color: var(--color-accent-ink);
-    background: var(--color-accent);
-  }
-
-  .secondary {
-    color: var(--color-text);
-    border: 1px solid var(--color-line);
-  }
-
-  .secondary:hover {
-    border-color: var(--color-text-muted);
   }
 </style>

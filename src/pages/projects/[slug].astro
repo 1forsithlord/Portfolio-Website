@@ -1,6 +1,10 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
 import { projects } from "@/content/projects";
 
 export const getStaticPaths = (() =>
@@ -17,40 +21,45 @@ const { project } = Astro.props as Props;
 <BaseLayout title={`${project.title} — Yash Pratap Singh`}>
   <main>
     <a class="back" href="/projects">← All projects</a>
-    <h1>{project.title}</h1>
-    <p class="summary">{project.summary}</p>
-    {
-      project.stack.length > 0 && (
-        <ul class="stack" aria-label="Tech stack">
-          {project.stack.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      )
-    }
-    <p class="links">
-      {
-        project.repoUrl && (
-          <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-            Code
-          </a>
-        )
-      }
-      {
-        project.demoUrl && (
-          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-            Live demo
-          </a>
-        )
-      }
-    </p>
+    <GlassPanel as="section" strength="strong">
+      <div class="body">
+        <SectionHeader level={1} title={project.title} description={project.summary} />
+        {
+          project.stack.length > 0 && (
+            <ul class="stack" aria-label="Tech stack">
+              {project.stack.map((item) => (
+                <li>
+                  <Tag>{item}</Tag>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          (project.repoUrl || project.demoUrl) && (
+            <div class="actions">
+              {project.repoUrl && (
+                <Button variant="primary" href={project.repoUrl} external>
+                  Code
+                </Button>
+              )}
+              {project.demoUrl && (
+                <Button href={project.demoUrl} external>
+                  Live demo
+                </Button>
+              )}
+            </div>
+          )
+        }
+      </div>
+    </GlassPanel>
   </main>
 </BaseLayout>
 
 <style>
   main {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-6);
     justify-items: start;
     max-width: var(--measure);
     margin-inline: auto;
@@ -61,8 +70,9 @@ const { project } = Astro.props as Props;
     color: var(--color-text-muted);
   }
 
-  .summary {
-    color: var(--color-text-muted);
+  .body {
+    display: grid;
+    gap: var(--space-6);
   }
 
   .stack {
@@ -73,21 +83,9 @@ const { project } = Astro.props as Props;
     padding: 0;
   }
 
-  .stack li {
-    padding: var(--space-1) var(--space-3);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-pill);
-  }
-
-  .links {
+  .actions {
     display: flex;
-    gap: var(--space-6);
-  }
-
-  .links a {
-    color: var(--color-accent);
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
 </style>
