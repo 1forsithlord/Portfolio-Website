@@ -47,8 +47,10 @@ export interface Planet {
 }
 
 export interface FrameState {
-  /** Seconds. Drives rotation, twinkle and orbits. */
-  t: number;
+  /** Seconds. Star twinkle only. Keeps counting for as long as the page is open. */
+  tTwinkle: number;
+  /** Seconds on the eased motion clock. Galaxy arms, planet orbits, planet spin and camera drift all follow it. */
+  tRotate: number;
   cam: Camera;
   /** Tint colour and how strongly it is mixed in (0 to 1). */
   tint: Vec3;
@@ -67,6 +69,10 @@ export interface RendererOptions {
   stars: number;
   /** Device pixel ratio the canvas is rendered at. The caller decides the cap. */
   dpr: number;
+  /** Called when the browser drops the WebGL context. */
+  onContextLost?: (() => void) | undefined;
+  /** Called when the browser offers the context back. The renderer cannot reuse it: build a new one. */
+  onContextRestored?: (() => void) | undefined;
 }
 
 export interface GalaxyRenderer {

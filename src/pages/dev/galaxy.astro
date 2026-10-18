@@ -3,93 +3,54 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import GlassPanel from "@/components/ui/GlassPanel.astro";
 ---
 
-<BaseLayout title="Galaxy renderer — temporary dev page">
+<BaseLayout title="Galaxy controller — temporary dev page">
   <div id="galaxy" class="stage"></div>
   <main>
     <GlassPanel>
-      <h1>Galaxy renderer</h1>
-      <p class="note">Temporary dev page. Renderer only: no scroll, no input, no performance tiers yet.</p>
+      <h1>Galaxy controller</h1>
+      <p class="note">
+        Temporary dev page, 6 planets. Add ?tier=high, ?tier=medium or ?tier=low to fix the tier.
+      </p>
       <p id="status" role="status">Starting…</p>
+      <button id="replay" type="button">Replay motion</button>
     </GlassPanel>
   </main>
 </BaseLayout>
 
 <script>
-  import { createGalaxyRenderer } from "@/lib/galaxy/renderer";
-  import { makePlanets } from "@/lib/galaxy/planets";
-  import type { Camera, FrameState } from "@/lib/galaxy/types";
+  import { startGalaxy } from "@/lib/galaxy/controller";
+  import type { TierName } from "@/lib/galaxy/tiers";
 
   const container = document.getElementById("galaxy");
   const status = document.getElementById("status");
+  const replay = document.getElementById("replay");
 
-  if (container && status) {
-    const small = window.innerWidth < 700;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const renderer = createGalaxyRenderer(container, {
-      particles: small ? 50000 : 130000,
-      stars: small ? 5000 : 9000,
-      dpr,
-    });
+  if (container && status && replay) {
+    const param = new URLSearchParams(window.location.search).get("tier");
+    const tier: TierName | undefined =
+      param === "high" || param === "medium" || param === "low" ? param : undefined;
 
-    if (!renderer) {
+    const galaxy = startGalaxy({ container, planetCount: 6, tier });
+
+    if (!galaxy) {
       status.textContent = "WebGL is not available here. The page stays a plain gradient.";
     } else {
-      const planets = makePlanets(6);
-      const cam: Camera = {
-        yaw: 0,
-        pitch: 1.0,
-        dist: 4.4,
-        sx: 0,
-        sy: 0,
-        tx: 0,
-        ty: 0,
-        tz: 0,
-        open: 1,
-        stars: 0.9,
-      };
-      const state: FrameState = {
-        t: 0,
-        cam,
-        tint: [1, 1, 1],
-        tintAmt: 0,
-        count: renderer.particles,
-        planets,
-        pAmt: 1,
-      };
-
-      const info = `${renderer.particles} particles, dpr ${dpr}, ${planets.length} planets`;
-      const start = performance.now();
-      let frames = 0;
-      let mark = start;
-
-      const frame = (now: number) => {
-        state.t = (now - start) / 1000;
-        cam.yaw = state.t * 0.05;
-        renderer.draw(state);
-        frames += 1;
-        if (now - mark > 500) {
-          status.textContent = `${info}, ${Math.round((frames * 1000) / (now - mark))} fps`;
-          frames = 0;
-          mark = now;
+      replay.addEventListener("click", () => galaxy.restartMotion());
+      let lastDrawn = 0;
+      let lastTime = performance.now();
+      let fps = 0;
+      window.setInterval(() => {
+        const s = galaxy.status();
+        const now = performance.now();
+        if (now - lastTime >= 1000) {
+          fps = Math.round(((s.drawn - lastDrawn) * 1000) / (now - lastTime));
+          lastDrawn = s.drawn;
+          lastTime = now;
         }
-        requestAnimationFrame(frame);
-      };
-
-      if (reduceMotion) {
-        // One still frame, redrawn only when the window size changes.
-        state.t = 4;
-        const still = () => {
-          renderer.resize();
-          renderer.draw(state);
-        };
-        still();
-        status.textContent = `${info}, reduced motion: still frame`;
-        window.addEventListener("resize", still);
-      } else {
-        window.addEventListener("resize", () => renderer.resize());
-        requestAnimationFrame(frame);
-      }
+        status.textContent = `tier ${s.tier}, ${s.state}, ${s.settled ? "settled" : "easing"}, elapsed ${s.elapsed.toFixed(1)}s, clock ${s.rotate.toFixed(2)}, ${fps} fps`;
+      }, 250);
+      // Test hook, read by the browser tests only.
+      Object.assign(window, { __galaxy: galaxy });
     }
   }
 </script>
@@ -121,5 +82,16 @@ import GlassPanel from "@/components/ui/GlassPanel.astro";
     margin-top: var(--space-3);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
+  }
+
+  button {
+    justify-self: start;
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
   }
 </style>

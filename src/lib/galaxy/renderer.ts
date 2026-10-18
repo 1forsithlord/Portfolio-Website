@@ -34,7 +34,7 @@ export function createGalaxyRenderer(
   if (!ctx) return null;
   const gl: WebGLRenderingContext = ctx;
 
-  const { particles: PARTICLES, stars: STARS, dpr: DPR } = options;
+  const { particles: PARTICLES, stars: STARS, dpr: DPR, onContextLost, onContextRestored } = options;
   let contextLost = false;
 
   const uniformCache = new Map<WebGLProgram, Map<string, WebGLUniformLocation | null>>();
@@ -133,8 +133,13 @@ export function createGalaxyRenderer(
   const onLost = (event: Event) => {
     event.preventDefault();
     contextLost = true;
+    onContextLost?.();
+  };
+  const onRestored = () => {
+    onContextRestored?.();
   };
   canvas.addEventListener("webglcontextlost", onLost);
+  canvas.addEventListener("webglcontextrestored", onRestored);
 
   function resize(): boolean {
     const w = container.clientWidth;
@@ -175,7 +180,7 @@ export function createGalaxyRenderer(
     gl.disableVertexAttribArray(1);
     gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 0);
     setCamera(pStars, cam, aspect);
-    gl.uniform1f(U(pStars, "t"), state.t);
+    gl.uniform1f(U(pStars, "t"), state.tTwinkle);
     gl.uniform1f(U(pStars, "amt"), cam.stars);
     gl.uniform1f(U(pStars, "dpr"), DPR);
     gl.drawArrays(gl.POINTS, 0, STARS);
@@ -188,7 +193,7 @@ export function createGalaxyRenderer(
     gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 20, 0);
     gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 20, 16);
     setCamera(pGal, cam, aspect);
-    gl.uniform1f(U(pGal, "t"), state.t);
+    gl.uniform1f(U(pGal, "t"), state.tRotate);
     gl.uniform1f(U(pGal, "dist"), cam.dist);
     gl.uniform1f(U(pGal, "dpr"), DPR);
     gl.uniform1f(U(pGal, "open"), cam.open);
@@ -213,7 +218,7 @@ export function createGalaxyRenderer(
       const origin = toView([0, 0, 0], cam);
       const list = state.planets
         .map((planet) => {
-          const pos = planetPos(planet, state.t);
+          const pos = planetPos(planet, state.tRotate);
           return { planet, pos, v: toView(pos, cam) };
         })
         .sort((x, y) => y.v[2] - x.v[2]);
@@ -246,7 +251,7 @@ export function createGalaxyRenderer(
         gl.uniform1f(U(pPlan, "ringRot"), planet.ringRot);
         gl.uniform1f(U(pPlan, "style"), pal.style);
         gl.uniform1f(U(pPlan, "seed"), planet.seed);
-        gl.uniform1f(U(pPlan, "spin"), state.t * 0.12 + planet.seed);
+        gl.uniform1f(U(pPlan, "spin"), state.tRotate * 0.12 + planet.seed);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
     }
@@ -254,6 +259,7 @@ export function createGalaxyRenderer(
 
   function dispose(): void {
     canvas.removeEventListener("webglcontextlost", onLost);
+    canvas.removeEventListener("webglcontextrestored", onRestored);
     if (!contextLost) {
       gl.deleteBuffer(galBuf);
       gl.deleteBuffer(starBuf);
