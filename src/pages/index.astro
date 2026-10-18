@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Button from "@/components/ui/Button.astro";
+import GalaxyBackground from "@/components/galaxy/GalaxyBackground.astro";
 import { site } from "@/content/site";
 import { projects } from "@/content/projects";
 
@@ -8,6 +9,7 @@ const featured = projects.filter((project) => project.featured);
 ---
 
 <BaseLayout title={`${site.name} — Developer Portfolio`}>
+  <GalaxyBackground />
   <main>
     <section class="hero" aria-labelledby="hero-title">
       <p class="eyebrow">{site.role}</p>

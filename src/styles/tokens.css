@@ -87,6 +87,7 @@
   --container-max: 68.75rem;
 
   /* z-index layers */
+  --z-behind: -1;
   --z-canvas: 0;
   --z-content: 10;
   --z-tags: 20;
