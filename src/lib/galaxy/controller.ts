@@ -1,3 +1,6 @@
+import { buildTimeline, cameraAt, heroCamera, planetAmount } from "../journey/timeline";
+import type { JourneyLayout } from "../journey/layout";
+import type { JourneyStore } from "../journey/store";
 import { MOTION, SETTLED_ROTATE, STILL_TWINKLE, easeOutClock } from "./motion";
 import { makePlanets } from "./planets";
 import { createGalaxyRenderer } from "./renderer";
@@ -27,8 +30,10 @@ const DRIFT = 0.05;
 
 export interface GalaxyOptions {
   container: HTMLElement;
-  /** How many planets to draw. 0 or missing draws none. */
+  /** How many planets to draw when there is no journey. 0 or missing draws none. */
   planetCount?: number | undefined;
+  /** Drives the camera and the planets from the scroll journey instead of the fixed hero camera. */
+  journey?: { store: JourneyStore; layout: JourneyLayout } | undefined;
   /** Fixes the tier and turns off automatic stepping down. For testing. */
   tier?: TierName | undefined;
 }
@@ -46,6 +51,10 @@ export interface GalaxyStatus {
   rotate: number;
   /** Frames drawn by the loop since start. Divide the change by the time for fps. */
   drawn: number;
+  /** Smoothed journey scroll position in screens, or null when there is no journey. */
+  s: number | null;
+  /** The camera used for the last frame. */
+  camera: Readonly<Camera>;
 }
 
 export interface GalaxyController {
@@ -53,22 +62,6 @@ export interface GalaxyController {
   /** Play the intro motion again from the start. */
   restartMotion(): void;
   destroy(): void;
-}
-
-/** Placeholder camera for the home hero. The scroll journey replaces it in a later step. */
-function heroCamera(wide: boolean): Camera {
-  return {
-    yaw: 0,
-    pitch: 1.05,
-    dist: 7.5,
-    sx: wide ? 0.55 : 0,
-    sy: wide ? 0 : -0.75,
-    tx: 0,
-    ty: 0,
-    tz: 0,
-    open: 0.5,
-    stars: 0.18,
-  };
 }
 
 /**
@@ -80,7 +73,8 @@ function heroCamera(wide: boolean): Camera {
 export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
   const { container } = options;
   const forcedTier = options.tier;
-  const planets = makePlanets(options.planetCount ?? 0);
+  const journey = options.journey;
+  const planets = makePlanets(journey ? journey.layout.planetCount : (options.planetCount ?? 0));
 
   const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const wideQuery = window.matchMedia("(min-width: 900px)");
@@ -97,10 +91,13 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
   let measured = 0;
   let measuredSum = 0;
   let seen = 0;
-  let measuredSettled = false;
+  let measuredCapped = false;
   let drawn = 0;
+  let stillQueued = false;
 
-  const cam = heroCamera(wideQuery.matches);
+  let heroCam = heroCamera(wideQuery.matches);
+  let timeline = journey ? buildTimeline(journey.layout, wideQuery.matches) : null;
+  const cam = { ...heroCam };
   const frameState: FrameState = {
     tTwinkle: 0,
     tRotate: 0,
@@ -124,7 +121,14 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
     const reduced = motionQuery.matches;
     frameState.tTwinkle = reduced ? STILL_TWINKLE : elapsed;
     frameState.tRotate = reduced ? SETTLED_ROTATE : easeOutClock(elapsed);
-    cam.yaw = frameState.tRotate * DRIFT;
+    if (journey && timeline) {
+      const s = journey.store.getSnapshot().s;
+      Object.assign(cam, cameraAt(timeline, s, planets, frameState.tRotate));
+      frameState.pAmt = planetAmount(s);
+    } else {
+      Object.assign(cam, heroCam);
+    }
+    cam.yaw += frameState.tRotate * DRIFT;
     renderer.draw(frameState);
   }
 
@@ -172,6 +176,7 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
     if (destroyed || !renderer || lost) return;
     if (motionQuery.matches) {
       state = "still";
+      journey?.store.snap();
       render();
     } else if (document.hidden) {
       state = "paused";
@@ -195,14 +200,17 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
     raf = requestAnimationFrame(frame);
     if (!renderer || lost) return;
     const since = Math.max(now - lastNow, 0);
-    const settled = elapsed >= MOTION.durationSec;
-    if (settled && since < SETTLED_FRAME_MS) return;
+    // Slow the loop down only when nothing but twinkle is moving. Scrolling needs full rate.
+    const capped = elapsed >= MOTION.durationSec && !(journey && journey.store.moving());
+    if (capped && since < SETTLED_FRAME_MS) return;
     lastNow = now;
-    elapsed += Math.min(since / 1000, MAX_STEP_SEC);
+    const dt = Math.min(since / 1000, MAX_STEP_SEC);
+    elapsed += dt;
+    journey?.store.step(dt);
 
     if (forcedTier === undefined) {
-      if (settled !== measuredSettled) {
-        measuredSettled = settled;
+      if (capped !== measuredCapped) {
+        measuredCapped = capped;
         resetMeter();
       }
       seen += 1;
@@ -212,7 +220,7 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
         if (measured >= WINDOW_FRAMES) {
           const mean = measuredSum / measured;
           resetMeter();
-          if (mean > (settled ? SLOW_FRAME_SETTLED_MS : SLOW_FRAME_MS)) {
+          if (mean > (capped ? SLOW_FRAME_SETTLED_MS : SLOW_FRAME_MS)) {
             stepDown();
             return;
           }
@@ -252,9 +260,21 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
   });
   const onVisibility = () => sync();
   const onWide = () => {
-    Object.assign(cam, heroCamera(wideQuery.matches));
+    heroCam = heroCamera(wideQuery.matches);
+    timeline = journey ? buildTimeline(journey.layout, wideQuery.matches) : null;
     render();
   };
+  /** Reduced motion has no loop, so a scroll redraws once on the next frame. */
+  const unsubscribeJourney = journey?.store.subscribe(() => {
+    if (state !== "still" || stillQueued) return;
+    stillQueued = true;
+    requestAnimationFrame(() => {
+      stillQueued = false;
+      if (state !== "still") return;
+      journey.store.snap();
+      render();
+    });
+  });
 
   if (!build()) {
     container.dataset.galaxy = "off";
@@ -277,6 +297,8 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
         elapsed,
         rotate: easeOutClock(elapsed),
         drawn,
+        s: journey ? journey.store.getSnapshot().s : null,
+        camera: { ...cam },
       };
     },
     restartMotion() {
@@ -292,6 +314,7 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
       document.removeEventListener("visibilitychange", onVisibility);
       motionQuery.removeEventListener("change", sync);
       wideQuery.removeEventListener("change", onWide);
+      unsubscribeJourney?.();
       renderer?.dispose();
       renderer = null;
       delete container.dataset.galaxy;
