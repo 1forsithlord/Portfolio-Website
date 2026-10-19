@@ -11,15 +11,15 @@ import type { JourneyLayout } from "./layout";
 export function heroCamera(wide: boolean): Camera {
   return {
     yaw: 0,
-    pitch: 1.05,
-    dist: 7.5,
+    pitch: 0.9,           // Slightly flatter angle to see the spiral better
+    dist: 4.5,            // Closer (was 7.5) - makes the galaxy much bigger
     sx: wide ? 0.55 : 0,
-    sy: wide ? 0 : -0.75,
+    sy: wide ? 0 : -0.65,
     tx: 0,
     ty: 0,
     tz: 0,
-    open: 0.5,
-    stars: 0.18,
+    open: 1,              // Fully open (was 0.5) - shows the full spiral immediately
+    stars: 0.4,           // Brighter stars
   };
 }
 
@@ -49,9 +49,11 @@ export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Ke
     frames.push({ arc: 0, focus: null, ...frame });
   };
 
+  // s=0: The big, fully open galaxy
   add({ s: 0, dist: hero.dist, pitch: hero.pitch, yaw: hero.yaw, open: hero.open, stars: hero.stars, sx: hero.sx, sy: hero.sy });
-  // The galaxy opens here. There is no pause: the camera keeps moving on to the first planet.
-  add({ s: OPEN_S, dist: 5.6, pitch: 0.85, yaw: 0.35, open: 0.92, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
+  
+  // s=0.9: Zoom OUT to reveal the whole spiral before the dive
+  add({ s: OPEN_S, dist: 6.5, pitch: 0.85, yaw: 0.35, open: 1, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
 
   const count = layout.planetCount;
   for (let i = 0; i < count; i += 1) {
