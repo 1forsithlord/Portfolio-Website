@@ -7,13 +7,13 @@ export function heroCamera(wide: boolean): Camera {
   return {
     yaw: 0,
     pitch: 0.9,
-    dist: 5.5,            // Zoomed out a bit to fit the huge 4-arm galaxy
+    dist: 6.5,            // Pulled back a bit so we see the 4 arms when it's closed
     sx: wide ? 0.55 : 0,
     sy: wide ? 0 : -0.65,
     tx: 0,
     ty: 0,
     tz: 0,
-    open: 0.1,            // Start tightly wound (0.1). It will grow to 1.0 over 20 seconds.
+    open: 0,              // Starts at 0 (which is 45% size in the shader now)
     stars: 0.4,
   };
 }
@@ -41,6 +41,8 @@ export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Ke
   };
 
   add({ s: 0, dist: hero.dist, pitch: hero.pitch, yaw: hero.yaw, open: hero.open, stars: hero.stars, sx: hero.sx, sy: hero.sy });
+  
+  // As you scroll, the camera pulls back and the galaxy opens
   add({ s: OPEN_S, dist: 7.5, pitch: 0.85, yaw: 0.35, open: 1, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
 
   const count = layout.planetCount;

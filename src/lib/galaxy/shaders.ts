@@ -49,7 +49,10 @@ export const galaxyVertex = `
     ${camGlsl}
     void main(){
       float r  = a.x;
-      float rr = pow(r, 1.15) * 1.7 * mix(0.1, 1.0, open);          // the galaxy opens up
+      
+      // CHANGED: mix(0.45, 1.0, open) prevents the galaxy from crushing into a white blob when closed
+      float rr = pow(r, 1.15) * 1.7 * mix(0.45, 1.0, open);          
+      
       float spread = 0.10 + 1.0 * pow(r, 1.3);
       float omega  = 0.28 / (0.35 + rr);
       
@@ -78,7 +81,10 @@ export const galaxyVertex = `
       c = mix(c, outer, smoothstep(0.35, 0.80, r));
       c = mix(c, rim,   smoothstep(0.75, 1.00, r));
       float ridge = 1.0 - smoothstep(0.0, 0.9, abs(a.y));
-      col = c * mix(0.30, 1.0, ridge) * mix(1.15, 0.5, r);
+      
+      // Slightly reduced brightness to prevent over-blowing the center
+      col = c * mix(0.30, 1.0, ridge) * mix(1.15, 0.5, r) * 0.8;
+      
       float lum = dot(col, vec3(0.34));
       col = mix(col, tint * lum * 2.4, tintAmt);
     }`;

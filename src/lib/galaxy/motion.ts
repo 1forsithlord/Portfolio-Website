@@ -9,9 +9,9 @@ export interface MotionConfig {
 }
 
 export const MOTION: MotionConfig = {
-  durationSec: 20, // CHANGED: 20 seconds instead of 8
-  startSpeed: 3,
-  decay: 5,
+  durationSec: 25, // 25 seconds of growth
+  startSpeed: 1,   // Normal speed
+  decay: 1.2,      // Very gentle decay, so it keeps moving the whole 25s
 };
 
 export function easeOutClock(elapsed: number, cfg: MotionConfig = MOTION): number {
