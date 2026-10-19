@@ -1,6 +1,6 @@
 import { clamp, planetPos, smooth01 } from "../galaxy/math";
 import type { Camera, Planet } from "../galaxy/types";
-import { INTRO_S, planetScroll } from "./layout";
+import { OPEN_S, planetScroll } from "./layout";
 import type { JourneyLayout } from "./layout";
 
 /**
@@ -44,16 +44,14 @@ const HOLD = 0.2;
 
 export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Keyframe[] {
   const hero = heroCamera(wide);
-  const syCard = wide ? 0 : 0.27;
   const frames: Keyframe[] = [];
   const add = (frame: Omit<Keyframe, "arc" | "focus"> & Partial<Pick<Keyframe, "arc" | "focus">>) => {
     frames.push({ arc: 0, focus: null, ...frame });
   };
 
   add({ s: 0, dist: hero.dist, pitch: hero.pitch, yaw: hero.yaw, open: hero.open, stars: hero.stars, sx: hero.sx, sy: hero.sy });
-  add({ s: 0.9, dist: 5.6, pitch: 0.85, yaw: 0.35, open: 0.92, stars: 0.7, sx: wide ? 0.38 : 0, sy: syCard });
-  add({ s: INTRO_S - HOLD, dist: 4.5, pitch: 0.6, yaw: 0.8, open: 1, stars: 0.95, sx: wide ? 0.44 : 0, sy: syCard });
-  add({ s: INTRO_S + HOLD, dist: 4.5, pitch: 0.6, yaw: 0.8, open: 1, stars: 0.95, sx: wide ? 0.44 : 0, sy: syCard, arc: 0.9 });
+  // The galaxy opens here. There is no pause: the camera keeps moving on to the first planet.
+  add({ s: OPEN_S, dist: 5.6, pitch: 0.85, yaw: 0.35, open: 0.92, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
 
   const count = layout.planetCount;
   for (let i = 0; i < count; i += 1) {

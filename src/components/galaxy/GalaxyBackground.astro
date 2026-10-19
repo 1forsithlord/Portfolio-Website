@@ -1,11 +1,5 @@
+<!-- The galaxy canvas host. enhanceHomeJourney() starts the renderer on it. -->
 <div class="galaxy" data-galaxy="pending" aria-hidden="true"></div>
-
-<script>
-  import { startGalaxy } from "@/lib/galaxy/controller";
-
-  const container = document.querySelector<HTMLElement>("[data-galaxy]");
-  if (container) startGalaxy({ container });
-</script>
 
 <style>
   /* z-index below zero: above the page background, below all normal content. */

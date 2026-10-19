@@ -1,3 +1,5 @@
+import { clamp } from "../galaxy/math";
+
 /*
   Where things sit along the scroll journey.
 
@@ -5,16 +7,16 @@
   scrolling past the top of the journey track.
 */
 
-/** The galaxy has opened up and the camera pauses. */
-export const INTRO_S = 1.4;
+/** Scroll position where the galaxy has opened up. The camera flies on from here to the first planet. */
+export const OPEN_S = 0.9;
 /** Scroll position of the first planet. */
-export const FIRST_PLANET_S = 2.7;
+export const FIRST_PLANET_S = 1.8;
 /** Screens of scrolling between one planet and the next. */
 export const PLANET_STEP = 1.0;
 /** Screens between the last planet and the closing stop. */
 export const OUT_PAD = 1.5;
 
-export type ChapterKind = "hero" | "intro" | "planet" | "out";
+export type ChapterKind = "hero" | "planet" | "out";
 
 export interface Chapter {
   kind: ChapterKind;
@@ -37,11 +39,8 @@ export const planetScroll = (index: number): number => FIRST_PLANET_S + index * 
 
 export function journeyLayout(planetCount: number): JourneyLayout {
   const count = Math.max(0, Math.floor(planetCount));
-  const sOut = (count > 0 ? planetScroll(count - 1) : INTRO_S) + OUT_PAD;
-  const chapters: Chapter[] = [
-    { kind: "hero", s: 0 },
-    { kind: "intro", s: INTRO_S },
-  ];
+  const sOut = (count > 0 ? planetScroll(count - 1) : OPEN_S) + OUT_PAD;
+  const chapters: Chapter[] = [{ kind: "hero", s: 0 }];
   for (let i = 0; i < count; i += 1) chapters.push({ kind: "planet", s: planetScroll(i), planet: i });
   chapters.push({ kind: "out", s: sOut });
   return { planetCount: count, chapters, sOut, totalScreens: sOut + 1 };
@@ -59,4 +58,9 @@ export function nearestChapter(layout: JourneyLayout, s: number): Chapter {
     }
   }
   return best;
+}
+
+/** 1 when a chapter's card is at its stop, fading to 0 over half a screen either side. */
+export function chapterVisibility(s: number, chapterS: number): number {
+  return clamp(1 - (Math.abs(s - chapterS) - 0.2) / 0.3, 0, 1);
 }
