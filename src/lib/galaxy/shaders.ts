@@ -49,10 +49,13 @@ export const galaxyVertex = `
     ${camGlsl}
     void main(){
       float r  = a.x;
-      float rr = pow(r, 1.15) * 1.7 * mix(0.5, 1.0, open);          // the galaxy opens up
+      float rr = pow(r, 1.15) * 1.7 * mix(0.1, 1.0, open);          // the galaxy opens up
       float spread = 0.10 + 1.0 * pow(r, 1.3);
       float omega  = 0.28 / (0.35 + rr);
-      float ang = a.w * 3.14159265 + rr * 2.6 + a.y * spread - t * omega;
+      
+      // CHANGED: 4 arms (1.57 offset instead of 3.14) and longer wind (4.8 instead of 2.6)
+      float ang = a.w * 1.570796 + rr * 4.8 + a.y * spread - t * omega;
+      
       float rad = rr + a.z * (0.015 + 0.09 * r);
       float thick = (0.01 + 0.07 * r) * (1.0 + 2.5 * pow(abs(h), 4.0));
       vec3 p = viewSpace(vec3(cos(ang) * rad, h * thick, sin(ang) * rad), target, yaw, pitch);
@@ -163,8 +166,8 @@ export const planetFragment = `
 
       float halo = smoothstep(0.96, 1.0, r) * exp(-(max(r, 1.0) - 1.0) * 6.5) * 0.55;
       vec4 res = vec4(atmo * halo * 0.8, halo * 0.5);
-      if (q.y < 0.0)  res = over(ringCol, res);   // far half of the ring
+      if (q.y < 0.0)  res = over(ringCol, res);
       res = over(sph, res);
-      if (q.y >= 0.0) res = over(ringCol, res);   // near half of the ring
+      if (q.y >= 0.0) res = over(ringCol, res);
       gl_FragColor = res * appear;
     }`;

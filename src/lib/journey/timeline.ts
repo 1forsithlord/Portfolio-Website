@@ -3,28 +3,22 @@ import type { Camera, Planet } from "../galaxy/types";
 import { OPEN_S, planetScroll } from "./layout";
 import type { JourneyLayout } from "./layout";
 
-/**
-  Camera for the home hero before any scrolling. Also the first keyframe.
-  Wide screens put the galaxy to the right of the text. Narrow screens put it
-  below the text and the page dims it, so the text stays readable.
-*/
 export function heroCamera(wide: boolean): Camera {
   return {
     yaw: 0,
-    pitch: 0.9,           // Slightly flatter angle to see the spiral better
-    dist: 4.5,            // Closer (was 7.5) - makes the galaxy much bigger
+    pitch: 0.9,
+    dist: 5.5,            // Zoomed out a bit to fit the huge 4-arm galaxy
     sx: wide ? 0.55 : 0,
     sy: wide ? 0 : -0.65,
     tx: 0,
     ty: 0,
     tz: 0,
-    open: 1,              // Fully open (was 0.5) - shows the full spiral immediately
-    stars: 0.4,           // Brighter stars
+    open: 0.1,            // Start tightly wound (0.1). It will grow to 1.0 over 20 seconds.
+    stars: 0.4,
   };
 }
 
 export interface Keyframe {
-  /** Scroll position in screens. */
   s: number;
   dist: number;
   pitch: number;
@@ -33,13 +27,10 @@ export interface Keyframe {
   stars: number;
   sx: number;
   sy: number;
-  /** Planet to look at. A fraction blends between two planets. null looks at the centre. */
   focus: number | null;
-  /** Extra distance added mid-way to the next keyframe, so the camera pulls back while it travels. */
   arc: number;
 }
 
-/** Half-width of the stop at a chapter, in screens. */
 const HOLD = 0.2;
 
 export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Keyframe[] {
@@ -49,11 +40,8 @@ export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Ke
     frames.push({ arc: 0, focus: null, ...frame });
   };
 
-  // s=0: The big, fully open galaxy
   add({ s: 0, dist: hero.dist, pitch: hero.pitch, yaw: hero.yaw, open: hero.open, stars: hero.stars, sx: hero.sx, sy: hero.sy });
-  
-  // s=0.9: Zoom OUT to reveal the whole spiral before the dive
-  add({ s: OPEN_S, dist: 6.5, pitch: 0.85, yaw: 0.35, open: 1, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
+  add({ s: OPEN_S, dist: 7.5, pitch: 0.85, yaw: 0.35, open: 1, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
 
   const count = layout.planetCount;
   for (let i = 0; i < count; i += 1) {
@@ -77,7 +65,6 @@ export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Ke
   return frames;
 }
 
-/** Where the camera looks when focused on planet `focus` (a fraction blends two planets). */
 function focusPoint(focus: number | null, planets: readonly Planet[], t: number): readonly [number, number, number] {
   if (focus === null || planets.length === 0) return [0, 0, 0];
   const last = planets.length - 1;
@@ -89,10 +76,6 @@ function focusPoint(focus: number | null, planets: readonly Planet[], t: number)
   return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u];
 }
 
-/**
-  Camera at scroll position s. `t` is the motion clock, so a camera that is
-  focused on a planet follows it while it still orbits.
-*/
 export function cameraAt(
   timeline: readonly Keyframe[],
   s: number,
@@ -122,5 +105,4 @@ export function cameraAt(
   };
 }
 
-/** 0 to 1: how visible the planets are. They appear as the camera flies in. */
 export const planetAmount = (s: number): number => smooth01((s - 0.55) / 0.7);

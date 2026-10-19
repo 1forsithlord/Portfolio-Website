@@ -12,11 +12,6 @@ import type { Camera, FrameState, GalaxyRenderer, RendererOptions } from "./type
 /** Matches the page background (--color-bg) as linear 0 to 1 channels. */
 const CLEAR: readonly [number, number, number] = [0.024, 0.02, 0.05];
 
-/**
-  Creates the WebGL galaxy inside `container`.
-  Returns null when WebGL is unavailable or a shader fails, so callers can
-  fall back to the plain gradient.
-*/
 export function createGalaxyRenderer(
   container: HTMLElement,
   options: RendererOptions,
@@ -88,12 +83,11 @@ export function createGalaxyRenderer(
   const galaxyProgram = program(galaxyVertex, galaxyFragment, { a: 0, h: 1 });
   const planetProgram = program(planetVertex, planetFragment, { corner: 0 });
   if (!starsProgram || !galaxyProgram || !planetProgram) return null;
-  // Re-bound as non-null constants so the narrowing holds inside draw() and dispose().
+  
   const pStars: WebGLProgram = starsProgram;
   const pGal: WebGLProgram = galaxyProgram;
   const pPlan: WebGLProgram = planetProgram;
 
-  /* ---- Buffers ---- */
   const random = seededRandom(20241015);
   const gauss = () => (random() + random() + random() - 1.5) / 1.5;
 
@@ -103,7 +97,8 @@ export function createGalaxyRenderer(
     galData[o] = Math.pow(random(), 0.8);
     galData[o + 1] = random() < 0.12 ? (random() * 2 - 1) * 3.5 : gauss();
     galData[o + 2] = gauss();
-    galData[o + 3] = i % 2;
+    // CHANGED: 4 arms instead of 2
+    galData[o + 3] = i % 4; 
     galData[o + 4] = gauss();
   }
   const galBuf = gl.createBuffer();
@@ -171,9 +166,8 @@ export function createGalaxyRenderer(
     gl.clearColor(CLEAR[0], CLEAR[1], CLEAR[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE); // additive glow
+    gl.blendFunc(gl.ONE, gl.ONE);
 
-    // stars
     gl.useProgram(pStars);
     gl.bindBuffer(gl.ARRAY_BUFFER, starBuf);
     gl.enableVertexAttribArray(0);
@@ -185,7 +179,6 @@ export function createGalaxyRenderer(
     gl.uniform1f(U(pStars, "dpr"), DPR);
     gl.drawArrays(gl.POINTS, 0, STARS);
 
-    // galaxy
     gl.useProgram(pGal);
     gl.bindBuffer(gl.ARRAY_BUFFER, galBuf);
     gl.enableVertexAttribArray(0);
@@ -202,7 +195,6 @@ export function createGalaxyRenderer(
     gl.uniform1f(U(pGal, "tintAmt"), state.tintAmt);
     gl.drawArrays(gl.POINTS, 0, Math.min(PARTICLES, state.count));
 
-    // planets, far to near, normal alpha blending
     if (state.pAmt > 0.01 && state.planets.length > 0) {
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.useProgram(pPlan);
@@ -225,12 +217,10 @@ export function createGalaxyRenderer(
 
       for (const { planet, pos, v } of list) {
         const pal = planet.palette;
-        // direction toward the galactic core
         const cx = origin[0] - v[0];
         const cy = origin[1] - v[1];
         const cz = -(origin[2] - v[2]);
         const cn = Math.hypot(cx, cy, cz) || 1;
-        // key light from the upper left, the core adds a rim
         const lx = -0.5 + (cx / cn) * 0.45;
         const ly = 0.55 + (cy / cn) * 0.45;
         const lz = 0.7 + (cz / cn) * 0.45;
