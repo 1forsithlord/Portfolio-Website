@@ -6,7 +6,9 @@ interface Props {
 const { tone = "outline" } = Astro.props;
 ---
 
-<span class="tag" data-tone={tone}><slot /></span>
+<span class="tag" data-tone={tone}>
+  <slot />
+</span>
 
 <style>
   .tag {

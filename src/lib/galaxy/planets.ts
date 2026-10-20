@@ -9,10 +9,22 @@ import type { Planet, PlanetPalette } from "./types";
 export const PLANET_PALETTES: readonly PlanetPalette[] = [
   { rgbA: [1.0, 0.7098, 0.6196], rgbB: [1.0, 0.4353, 0.6118], rgbAtmo: [1.0, 0.8235, 0.7608], style: 0, ring: false },
   { rgbA: [0.7255, 0.6588, 1.0], rgbB: [0.3725, 0.2941, 1.0], rgbAtmo: [0.8118, 0.7686, 1.0], style: 1, ring: false },
-  { rgbA: [0.5608, 0.9412, 0.902], rgbB: [0.1216, 0.6549, 0.749], rgbAtmo: [0.7686, 0.9843, 0.9608], style: 2, ring: true },
+  {
+    rgbA: [0.5608, 0.9412, 0.902],
+    rgbB: [0.1216, 0.6549, 0.749],
+    rgbAtmo: [0.7686, 0.9843, 0.9608],
+    style: 2,
+    ring: true,
+  },
   { rgbA: [1.0, 0.6235, 0.8392], rgbB: [0.651, 0.2471, 0.8157], rgbAtmo: [1.0, 0.7843, 0.9176], style: 0, ring: false },
   { rgbA: [1.0, 0.851, 0.6275], rgbB: [1.0, 0.5765, 0.3608], rgbAtmo: [1.0, 0.9137, 0.7882], style: 3, ring: true },
-  { rgbA: [0.7412, 0.9686, 0.8118], rgbB: [0.2471, 0.749, 0.5804], rgbAtmo: [0.8627, 1.0, 0.9098], style: 1, ring: false },
+  {
+    rgbA: [0.7412, 0.9686, 0.8118],
+    rgbB: [0.2471, 0.749, 0.5804],
+    rgbAtmo: [0.8627, 1.0, 0.9098],
+    style: 1,
+    ring: false,
+  },
 ];
 
 /** Builds the orbit parameters for planet number `index`. */

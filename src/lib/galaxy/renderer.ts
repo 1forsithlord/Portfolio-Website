@@ -1,21 +1,11 @@
 import { clamp, planetPos, seededRandom, smooth01, toView } from "./math";
-import {
-  galaxyFragment,
-  galaxyVertex,
-  planetFragment,
-  planetVertex,
-  starFragment,
-  starVertex,
-} from "./shaders";
+import { galaxyFragment, galaxyVertex, planetFragment, planetVertex, starFragment, starVertex } from "./shaders";
 import type { Camera, FrameState, GalaxyRenderer, RendererOptions } from "./types";
 
 /** Matches the page background (--color-bg) as linear 0 to 1 channels. */
 const CLEAR: readonly [number, number, number] = [0.024, 0.02, 0.05];
 
-export function createGalaxyRenderer(
-  container: HTMLElement,
-  options: RendererOptions,
-): GalaxyRenderer | null {
+export function createGalaxyRenderer(container: HTMLElement, options: RendererOptions): GalaxyRenderer | null {
   const canvas = document.createElement("canvas");
   canvas.setAttribute("aria-hidden", "true");
   canvas.style.cssText = "display:block;width:100%;height:100%";
@@ -56,11 +46,7 @@ export function createGalaxyRenderer(
     return shader;
   }
 
-  function program(
-    vertexSource: string,
-    fragmentSource: string,
-    attribs: Record<string, number>,
-  ): WebGLProgram | null {
+  function program(vertexSource: string, fragmentSource: string, attribs: Record<string, number>): WebGLProgram | null {
     const vs = compile(gl.VERTEX_SHADER, vertexSource);
     const fs = compile(gl.FRAGMENT_SHADER, fragmentSource);
     const p = gl.createProgram();
@@ -83,7 +69,7 @@ export function createGalaxyRenderer(
   const galaxyProgram = program(galaxyVertex, galaxyFragment, { a: 0, h: 1 });
   const planetProgram = program(planetVertex, planetFragment, { corner: 0 });
   if (!starsProgram || !galaxyProgram || !planetProgram) return null;
-  
+
   const pStars: WebGLProgram = starsProgram;
   const pGal: WebGLProgram = galaxyProgram;
   const pPlan: WebGLProgram = planetProgram;
@@ -98,7 +84,7 @@ export function createGalaxyRenderer(
     galData[o + 1] = random() < 0.12 ? (random() * 2 - 1) * 3.5 : gauss();
     galData[o + 2] = gauss();
     // CHANGED: 4 arms instead of 2
-    galData[o + 3] = i % 4; 
+    galData[o + 3] = i % 4;
     galData[o + 4] = gauss();
   }
   const galBuf = gl.createBuffer();

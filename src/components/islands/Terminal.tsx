@@ -70,10 +70,15 @@ export function Terminal() {
     <section className="terminal" aria-label="Terminal">
       <div ref={logRef} className="term-log" role="log" aria-live="polite" aria-relevant="additions" tabIndex={0}>
         {lines.map((line, index) => (
-          <div key={index} className={line.kind === "input" ? "term-input-line" : line.kind === "error" ? "term-error" : "term-output"}>
+          <div
+            key={index}
+            className={line.kind === "input" ? "term-input-line" : line.kind === "error" ? "term-error" : "term-output"}
+          >
             {line.kind === "input" ? (
               <>
-                <span className="term-prompt" aria-hidden="true">$ </span>
+                <span className="term-prompt" aria-hidden="true">
+                  ${" "}
+                </span>
                 {line.text}
               </>
             ) : (

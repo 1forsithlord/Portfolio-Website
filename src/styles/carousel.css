@@ -6,7 +6,7 @@
   gap: var(--space-4);
   color: var(--color-text);
   position: relative;
-  isolation: isolate; 
+  isolation: isolate;
 }
 
 .carousel::before {
@@ -14,7 +14,7 @@
   position: absolute;
   inset: 0 -10%;
   z-index: -1;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, var(--glow-pink), transparent 60%),
     radial-gradient(circle at 80% 50%, var(--glow-violet), transparent 60%),
     radial-gradient(circle at 50% 50%, var(--color-lagoon), transparent 50%);
@@ -82,9 +82,9 @@
 
 .face-button[aria-current="true"] .surface {
   border-color: var(--color-accent);
-  box-shadow: 
-    0 0 0 1px var(--color-accent), 
-    0 0 40px var(--glow-pink), 
+  box-shadow:
+    0 0 0 1px var(--color-accent),
+    0 0 40px var(--glow-pink),
     var(--shadow-glass);
 }
 
@@ -105,7 +105,7 @@
 .summary {
   display: -webkit-box;
   -webkit-line-clamp: 4;
-    line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: var(--color-text-muted);

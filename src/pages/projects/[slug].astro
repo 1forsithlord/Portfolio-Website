@@ -20,37 +20,35 @@ const { project } = Astro.props as Props;
 
 <BaseLayout title={`${project.title} — Yash Pratap Singh`}>
   <main>
-    <a class="back" href="/projects">← All projects</a>
+    <a class="back" href="/projects">
+      ← All projects
+    </a>
     <GlassPanel as="section" strength="strong">
       <div class="body">
         <SectionHeader level={1} title={project.title} description={project.summary} />
-        {
-          project.stack.length > 0 && (
-            <ul class="stack" aria-label="Tech stack">
-              {project.stack.map((item) => (
-                <li>
-                  <Tag>{item}</Tag>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-        {
-          (project.repoUrl || project.demoUrl) && (
-            <div class="actions">
-              {project.repoUrl && (
-                <Button variant="primary" href={project.repoUrl} external>
-                  Code
-                </Button>
-              )}
-              {project.demoUrl && (
-                <Button href={project.demoUrl} external>
-                  Live demo
-                </Button>
-              )}
-            </div>
-          )
-        }
+        {project.stack.length > 0 && (
+          <ul class="stack" aria-label="Tech stack">
+            {project.stack.map((item) => (
+              <li>
+                <Tag>{item}</Tag>
+              </li>
+            ))}
+          </ul>
+        )}
+        {(project.repoUrl || project.demoUrl) && (
+          <div class="actions">
+            {project.repoUrl && (
+              <Button variant="primary" href={project.repoUrl} external>
+                Code
+              </Button>
+            )}
+            {project.demoUrl && (
+              <Button href={project.demoUrl} external>
+                Live demo
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </GlassPanel>
   </main>

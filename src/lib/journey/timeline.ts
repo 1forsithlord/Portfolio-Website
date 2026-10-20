@@ -7,13 +7,13 @@ export function heroCamera(wide: boolean): Camera {
   return {
     yaw: 0,
     pitch: 0.9,
-    dist: 6.5,            // Pulled back a bit so we see the 4 arms when it's closed
+    dist: 6.5, // Pulled back a bit so we see the 4 arms when it's closed
     sx: wide ? 0.55 : 0,
     sy: wide ? 0 : -0.65,
     tx: 0,
     ty: 0,
     tz: 0,
-    open: 0,              // Starts at 0 (which is 45% size in the shader now)
+    open: 0, // Starts at 0 (which is 45% size in the shader now)
     stars: 0.4,
   };
 }
@@ -40,8 +40,17 @@ export function buildTimeline(layout: JourneyLayout, wide: boolean): readonly Ke
     frames.push({ arc: 0, focus: null, ...frame });
   };
 
-  add({ s: 0, dist: hero.dist, pitch: hero.pitch, yaw: hero.yaw, open: hero.open, stars: hero.stars, sx: hero.sx, sy: hero.sy });
-  
+  add({
+    s: 0,
+    dist: hero.dist,
+    pitch: hero.pitch,
+    yaw: hero.yaw,
+    open: hero.open,
+    stars: hero.stars,
+    sx: hero.sx,
+    sy: hero.sy,
+  });
+
   // As you scroll, the camera pulls back and the galaxy opens
   add({ s: OPEN_S, dist: 7.5, pitch: 0.85, yaw: 0.35, open: 1, stars: 0.7, sx: wide ? 0.38 : 0, sy: 0 });
 
@@ -78,12 +87,7 @@ function focusPoint(focus: number | null, planets: readonly Planet[], t: number)
   return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u];
 }
 
-export function cameraAt(
-  timeline: readonly Keyframe[],
-  s: number,
-  planets: readonly Planet[],
-  t: number,
-): Camera {
+export function cameraAt(timeline: readonly Keyframe[], s: number, planets: readonly Planet[], t: number): Camera {
   let j = 0;
   while (j < timeline.length - 2 && s >= (timeline[j + 1] as Keyframe).s) j += 1;
   const a = timeline[j] as Keyframe;

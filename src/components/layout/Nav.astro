@@ -11,19 +11,21 @@ function isActive(href: string): boolean {
 
 <header class="site-header">
   <nav aria-label="Primary">
-    <a class="brand" href="/">{site.brand}</a>
+    <a class="brand" href="/">
+      {site.brand}
+    </a>
     <ul>
-      {
-        nav.map((item) => (
-          <li>
-            <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
-              {item.label}
-            </a>
-          </li>
-        ))
-      }
+      {nav.map((item) => (
+        <li>
+          <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))}
       <li>
-        <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href={site.githubUrl} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
       </li>
     </ul>
   </nav>

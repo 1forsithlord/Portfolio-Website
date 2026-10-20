@@ -8,11 +8,13 @@ import GlassPanel from "@/components/ui/GlassPanel.astro";
   <main>
     <GlassPanel>
       <h1>Galaxy controller</h1>
-      <p class="note">
-        Temporary dev page, 6 planets. Add ?tier=high, ?tier=medium or ?tier=low to fix the tier.
+      <p class="note">Temporary dev page, 6 planets. Add ?tier=high, ?tier=medium or ?tier=low to fix the tier.</p>
+      <p id="status" role="status">
+        Starting…
       </p>
-      <p id="status" role="status">Starting…</p>
-      <button id="replay" type="button">Replay motion</button>
+      <button id="replay" type="button">
+        Replay motion
+      </button>
     </GlassPanel>
   </main>
 </BaseLayout>
@@ -27,8 +29,7 @@ import GlassPanel from "@/components/ui/GlassPanel.astro";
 
   if (container && status && replay) {
     const param = new URLSearchParams(window.location.search).get("tier");
-    const tier: TierName | undefined =
-      param === "high" || param === "medium" || param === "low" ? param : undefined;
+    const tier: TierName | undefined = param === "high" || param === "medium" || param === "low" ? param : undefined;
 
     const galaxy = startGalaxy({ container, planetCount: 6, tier });
 

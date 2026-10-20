@@ -107,7 +107,15 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
     const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
 
     return (
-      <div ref={rootRef} className="carousel" data-mode="detail" role="region" aria-roledescription="carousel" aria-label="Featured projects" onKeyDown={onKeyDown}>
+      <div
+        ref={rootRef}
+        className="carousel"
+        data-mode="detail"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Featured projects"
+        onKeyDown={onKeyDown}
+      >
         <article className="detail" aria-labelledby="detail-title">
           <div className="surface detail-surface">
             <p className="index">
@@ -117,7 +125,7 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
               {project.title}
             </h2>
             <p className="detail-summary">{project.summary}</p>
-            
+
             {/* NEW: Render stats in detail view */}
             {stats && (
               <ul className="meta" aria-label="Repository">
@@ -160,14 +168,22 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
   }
 
   return (
-    <div ref={rootRef} className="carousel" data-mode="browse" role="region" aria-roledescription="carousel" aria-label="Featured projects" onKeyDown={onKeyDown}>
+    <div
+      ref={rootRef}
+      className="carousel"
+      data-mode="browse"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured projects"
+      onKeyDown={onKeyDown}
+    >
       <div ref={trackRef} className="track">
         {projects.map((project, i) => {
           const distance = i - position;
           const offset = clamp(distance, -MAX_OFFSET, MAX_OFFSET);
           const amount = Math.abs(offset);
           const hidden = Math.abs(distance) > MAX_OFFSET;
-          
+
           const stats = getRepoStats(project.repoUrl); // NEW
           const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
 
@@ -198,7 +214,7 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
                   </span>
                   <span className="title">{project.title}</span>
                   <span className="summary">{project.summary}</span>
-                  
+
                   {/* NEW: Render stats on the card face */}
                   {stats && (
                     <span className="meta">

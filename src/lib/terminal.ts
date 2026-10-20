@@ -9,10 +9,7 @@ export interface Line {
 }
 
 /** Something the terminal asks the page to do after printing its lines. */
-export type Action =
-  | { type: "navigate"; href: string }
-  | { type: "galaxy-reset" }
-  | { type: "clear" };
+export type Action = { type: "navigate"; href: string } | { type: "galaxy-reset" } | { type: "clear" };
 
 export interface CommandResult {
   lines: Line[];
@@ -83,7 +80,9 @@ export function runCommand(raw: string, ctx: CommandContext): CommandResult {
         (project, i) => `${String(i + 1).padStart(2, "0")}  ${project.title}\n    ${project.summary}`,
       );
       return {
-        lines: output(`Projects in content order. Live GitHub commits are not connected yet.\n\n${entries.join("\n\n")}`),
+        lines: output(
+          `Projects in content order. Live GitHub commits are not connected yet.\n\n${entries.join("\n\n")}`,
+        ),
       };
     }
 

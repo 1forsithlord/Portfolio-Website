@@ -11,40 +11,37 @@ const focus = ["Machine learning", "Full-stack", "Systems"];
 
 <BaseLayout title="About — Yash Pratap Singh">
   <main>
-    <img
-      class="photo"
-      src="/MYPHOTO.jpeg"
-      alt="Portrait of Yash Pratap Singh"
-      width="571"
-      height="821"
-    />
+    <img class="photo" src="/MYPHOTO.jpeg" alt="Portrait of Yash Pratap Singh" width="571" height="821" />
     <div class="text">
       <SectionHeader level={1} title="About" />
       <p>
-        I'm a final-year computer science student who likes building things end to end — from a rough idea to something someone can actually open and use. I'm working across full-stack development, machine learning, and systems programming at the same time, and learning fastest by shipping real projects.
+        I'm a final-year computer science student who likes building things end to end — from a rough idea to something
+        someone can actually open and use. I'm working across full-stack development, machine learning, and systems
+        programming at the same time, and learning fastest by shipping real projects.
       </p>
       <p>
-        Outside of coursework I tinker with local AI tooling, small desktop apps, and games — usually because I wanted to learn how a piece of it worked.
+        Outside of coursework I tinker with local AI tooling, small desktop apps, and games — usually because I wanted
+        to learn how a piece of it worked.
       </p>
       <ul class="focus" aria-label="Focus areas">
-        {
-          focus.map((item) => (
-            <li>
-              <Tag tone="accent">{item}</Tag>
-            </li>
-          ))
-        }
+        {focus.map((item) => (
+          <li>
+            <Tag tone="accent">{item}</Tag>
+          </li>
+        ))}
       </ul>
-      <SectionHeader level={2} title="Try the terminal" description="Type help to see what it can do. It is a shortcut to the rest of the site." />
+      <SectionHeader
+        level={2}
+        title="Try the terminal"
+        description="Type help to see what it can do. It is a shortcut to the rest of the site."
+      />
       <Terminal client:visible />
-      {
-        activity.length > 0 && (
-          <>
-            <SectionHeader level={2} title="Recent activity" description="Dated entries I add by hand." />
-            <ActivityFeed items={activity} client:visible />
-          </>
-        )
-      }
+      {activity.length > 0 && (
+        <>
+          <SectionHeader level={2} title="Recent activity" description="Dated entries I add by hand." />
+          <ActivityFeed items={activity} client:visible />
+        </>
+      )}
     </div>
   </main>
 </BaseLayout>

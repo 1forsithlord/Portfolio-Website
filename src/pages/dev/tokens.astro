@@ -24,49 +24,41 @@ const layers = ["canvas", "content", "tags", "nav", "overlay", "modal"];
 <BaseLayout title="Tokens — temporary dev page">
   <main>
     <h1>Design tokens</h1>
-    <p class="note">
-      Temporary page for checking tokens. It is removed before promotion to main.
-    </p>
+    <p class="note">Temporary page for checking tokens. It is removed before promotion to main.</p>
 
     <section>
       <h2>Color</h2>
       <ul class="swatches">
-        {
-          colors.map((name) => (
-            <li>
-              <span class="swatch" style={`background: var(${name})`} />
-              <code>{name}</code>
-            </li>
-          ))
-        }
+        {colors.map((name) => (
+          <li>
+            <span class="swatch" style={`background: var(${name})`} />
+            <code>{name}</code>
+          </li>
+        ))}
       </ul>
     </section>
 
     <section>
       <h2>Spacing</h2>
       <ul class="bars">
-        {
-          spacing.map((n) => (
-            <li>
-              <code>--space-{n}</code>
-              <span class="bar" style={`width: var(--space-${n})`} />
-            </li>
-          ))
-        }
+        {spacing.map((n) => (
+          <li>
+            <code>--space-{n}</code>
+            <span class="bar" style={`width: var(--space-${n})`} />
+          </li>
+        ))}
       </ul>
     </section>
 
     <section>
       <h2>Radius</h2>
       <ul class="radii">
-        {
-          radii.map((name) => (
-            <li>
-              <span class="box" style={`border-radius: var(--radius-${name})`} />
-              <code>--radius-{name}</code>
-            </li>
-          ))
-        }
+        {radii.map((name) => (
+          <li>
+            <span class="box" style={`border-radius: var(--radius-${name})`} />
+            <code>--radius-{name}</code>
+          </li>
+        ))}
       </ul>
     </section>
 
@@ -74,7 +66,10 @@ const layers = ["canvas", "content", "tags", "nav", "overlay", "modal"];
       <h2>Glass</h2>
       <div class="stripe">
         <div class="glass">
-          <p><code>--glass-fill</code>, <code>--glass-border</code>, <code>--backdrop-strong</code>, <code>--shadow-glass</code></p>
+          <p>
+            <code>--glass-fill</code>, <code>--glass-border</code>, <code>--backdrop-strong</code>,{" "}
+            <code>--shadow-glass</code>
+          </p>
         </div>
       </div>
     </section>
@@ -82,7 +77,11 @@ const layers = ["canvas", "content", "tags", "nav", "overlay", "modal"];
     <section>
       <h2>Z layers</h2>
       <ul class="layers">
-        {layers.map((name) => <li><code>--z-{name}</code></li>)}
+        {layers.map((name) => (
+          <li>
+            <code>--z-{name}</code>
+          </li>
+        ))}
       </ul>
     </section>
 

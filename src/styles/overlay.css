@@ -102,7 +102,7 @@
   position: fixed;
   right: var(--space-4);
   /* Moved to top-right so it doesn't overlap the terminal on the About page */
-  top: calc(var(--nav-height) + var(--space-4)); 
+  top: calc(var(--nav-height) + var(--space-4));
   z-index: var(--z-nav);
   display: inline-flex;
   align-items: center;

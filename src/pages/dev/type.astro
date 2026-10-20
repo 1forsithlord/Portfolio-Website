@@ -9,14 +9,14 @@ const steps = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "hero"] as const;
     <h1>Type scale</h1>
     <p class="note">Temporary. Resize the window: large sizes scale, small ones stay fixed.</p>
     <ul>
-      {
-        steps.map((step) => (
-          <li>
-            <code>--text-{step}</code>
-            <span class="sample" style={`font-size: var(--text-${step})`}>Machine learning, shipped</span>
-          </li>
-        ))
-      }
+      {steps.map((step) => (
+        <li>
+          <code>--text-{step}</code>
+          <span class="sample" style={`font-size: var(--text-${step})`}>
+            Machine learning, shipped
+          </span>
+        </li>
+      ))}
     </ul>
   </main>
 </BaseLayout>

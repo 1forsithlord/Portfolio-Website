@@ -9,16 +9,16 @@ interface Props {
 const { label, value, index = 0 } = Astro.props;
 ---
 
-{
-  value !== null && (
-    <div class="reveal" data-reveal style={`--reveal-index:${index}`}>
-      <div class="stat">
-        <dt>{label}</dt>
-        <dd><span data-count-to={value}>{value.toLocaleString("en-US")}</span></dd>
-      </div>
+{value !== null && (
+  <div class="reveal" data-reveal style={`--reveal-index:${index}`}>
+    <div class="stat">
+      <dt>{label}</dt>
+      <dd>
+        <span data-count-to={value}>{value.toLocaleString("en-US")}</span>
+      </dd>
     </div>
-  )
-}
+  </div>
+)}
 
 <style>
   /* Outer element is revealed (transformed). Inner element owns backdrop-filter. Same Safari rule as GlassPanel. */

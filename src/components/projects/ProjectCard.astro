@@ -17,38 +17,34 @@ const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null;
 
 <GlassPanel as="article">
   <div class="body">
-    <h3><a href={`/projects/${project.slug}`}>{project.title}</a></h3>
+    <h3>
+      <a href={`/projects/${project.slug}`}>{project.title}</a>
+    </h3>
     <p class="summary">{project.summary}</p>
-    {
-      stats && (
-        <ul class="meta" aria-label="Repository">
-          {stats.archived && <li>Archived</li>}
-          <li>★ {stats.stars}</li>
-          {stats.language && <li>{stats.language}</li>}
-          {pushedOn && <li>Updated {pushedOn}</li>}
-        </ul>
-      )
-    }
-    {
-      project.stack.length > 0 && (
-        <ul class="stack" aria-label="Tech stack">
-          {project.stack.map((item) => (
-            <li>
-              <Tag>{item}</Tag>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-    {
-      project.repoUrl && (
-        <div class="actions">
-          <Button href={project.repoUrl} external size="sm">
-            Code
-          </Button>
-        </div>
-      )
-    }
+    {stats && (
+      <ul class="meta" aria-label="Repository">
+        {stats.archived && <li>Archived</li>}
+        <li>★ {stats.stars}</li>
+        {stats.language && <li>{stats.language}</li>}
+        {pushedOn && <li>Updated {pushedOn}</li>}
+      </ul>
+    )}
+    {project.stack.length > 0 && (
+      <ul class="stack" aria-label="Tech stack">
+        {project.stack.map((item) => (
+          <li>
+            <Tag>{item}</Tag>
+          </li>
+        ))}
+      </ul>
+    )}
+    {project.repoUrl && (
+      <div class="actions">
+        <Button href={project.repoUrl} external size="sm">
+          Code
+        </Button>
+      </div>
+    )}
   </div>
 </GlassPanel>
 

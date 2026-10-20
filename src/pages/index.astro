@@ -16,7 +16,9 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
 <BaseLayout title={`${site.name} — Developer Portfolio`}>
   <main class="journey" data-journey-root data-planets={String(featured.length)}>
     <GalaxyBackground />
-    <a class="skip" href="#featured-title">Skip to featured work</a>
+    <a class="skip" href="#featured-title">
+      Skip to featured work
+    </a>
 
     <div class="track" data-track>
       <div class="chapter" data-chapter="0" data-kind="hero" data-place="left">
@@ -26,67 +28,73 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
             <h1 id="hero-title">{site.name}</h1>
             <p class="pitch">{site.tagline}</p>
             <div class="actions">
-              <Button variant="primary" href="/projects">View projects</Button>
+              <Button variant="primary" href="/projects">
+                View projects
+              </Button>
               <Button href="/contact">Contact me</Button>
             </div>
-            <p class="cue" data-cue>Scroll to explore</p>
+            <p class="cue" data-cue>
+              Scroll to explore
+            </p>
           </section>
         </GlassPanel>
       </div>
 
-      {
-        featured.map((project, i) => (
-          <div
-            class="chapter"
-            data-chapter={String(i + 1)}
-            data-kind="planet"
-            data-place={i % 2 === 0 ? "left" : "right"}
-          >
-            <GlassPanel as="article">
-              <p class="index">
-                {pad(i + 1)} / {pad(featured.length)}
-              </p>
-              <h2 class="project-title">{project.title}</h2>
-              <p class="summary">{project.summary}</p>
-              <ul class="stack" aria-label="Stack">
-                {project.stack.map((item) => (
-                  <li>
-                    <Tag>{item}</Tag>
-                  </li>
-                ))}
-              </ul>
-              <div class="actions">
-                <Button variant="primary" size="sm" href={`/projects/${project.slug}`}>
-                  Case study
+      {featured.map((project, i) => (
+        <div
+          class="chapter"
+          data-chapter={String(i + 1)}
+          data-kind="planet"
+          data-place={i % 2 === 0 ? "left" : "right"}
+        >
+          <GlassPanel as="article">
+            <p class="index">
+              {pad(i + 1)} / {pad(featured.length)}
+            </p>
+            <h2 class="project-title">{project.title}</h2>
+            <p class="summary">{project.summary}</p>
+            <ul class="stack" aria-label="Stack">
+              {project.stack.map((item) => (
+                <li>
+                  <Tag>{item}</Tag>
+                </li>
+              ))}
+            </ul>
+            <div class="actions">
+              <Button variant="primary" size="sm" href={`/projects/${project.slug}`}>
+                Case study
+              </Button>
+              {project.repoUrl && (
+                <Button size="sm" href={project.repoUrl} external>
+                  Source
                 </Button>
-                {project.repoUrl && (
-                  <Button size="sm" href={project.repoUrl} external>
-                    Source
-                  </Button>
-                )}
-              </div>
-            </GlassPanel>
-          </div>
-        ))
-      }
+              )}
+            </div>
+          </GlassPanel>
+        </div>
+      ))}
 
       <div class="chapter" data-chapter={String(featured.length + 1)} data-kind="out" data-place="left">
         <GlassPanel as="section">
-          <h2 id="featured-title" class="kicker">Featured work</h2>
+          <h2 id="featured-title" class="kicker">
+            Featured work
+          </h2>
           <ul class="list">
-            {
-              featured.map((project) => (
-                <li>
-                  <a href={`/projects/${project.slug}`}>
-                    <span class="name">{project.title}</span>
-                    <span class="arrow" aria-hidden="true">→</span>
-                  </a>
-                </li>
-              ))
-            }
+            {featured.map((project) => (
+              <li>
+                <a href={`/projects/${project.slug}`}>
+                  <span class="name">{project.title}</span>
+                  <span class="arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              </li>
+            ))}
           </ul>
           <div class="actions">
-            <Button variant="primary" href="/projects">All projects</Button>
+            <Button variant="primary" href="/projects">
+              All projects
+            </Button>
             <Button href="/contact">Contact me</Button>
           </div>
         </GlassPanel>
@@ -95,24 +103,20 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
 
     <nav class="rail" aria-label="Chapters" data-rail>
       <ul>
-        {
-          labels.map((label) => (
-            <li>
-              <button type="button" class="dot" data-rail-item aria-label={label} title={label} />
-            </li>
-          ))
-        }
+        {labels.map((label) => (
+          <li>
+            <button type="button" class="dot" data-rail-item aria-label={label} title={label} />
+          </li>
+        ))}
       </ul>
     </nav>
 
     <div class="tags" aria-hidden="true">
-      {
-        featured.map((project, i) => (
-          <a class="planet-tag" data-planet-tag={String(i)} href={`/projects/${project.slug}`} tabindex="-1">
-            {project.title}
-          </a>
-        ))
-      }
+      {featured.map((project, i) => (
+        <a class="planet-tag" data-planet-tag={String(i)} href={`/projects/${project.slug}`} tabindex="-1">
+          {project.title}
+        </a>
+      ))}
     </div>
   </main>
 </BaseLayout>

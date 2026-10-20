@@ -1,0 +1,11 @@
+# build output and dependencies
+dist/
+.astro/
+node_modules/
+
+# original vanilla site, kept as reference until promotion (4.5)
+legacy/
+
+# generated at build time by scripts/fetch-github.mjs
+src/content/github.generated.json
+package-lock.json

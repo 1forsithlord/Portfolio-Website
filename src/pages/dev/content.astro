@@ -8,27 +8,24 @@ import { site } from "@/content/site";
   <main>
     <h1>{site.name}: content check</h1>
     <p class="note">
-      Temporary page that lists everything in src/content/projects.ts. It is
-      removed before promotion to main.
+      Temporary page that lists everything in src/content/projects.ts. It is removed before promotion to main.
     </p>
 
     <ol>
-      {
-        projects.map((project) => (
-          <li>
-            <h2>
-              {project.title} <code>{project.slug}</code>
-              {project.featured && <span class="badge">featured</span>}
-            </h2>
-            <p>{project.summary}</p>
-            <p class="meta">
-              stack: {project.stack.length > 0 ? project.stack.join(", ") : "none yet"}
-              {" · "}
-              repo: {project.repoUrl ?? "not set"}
-            </p>
-          </li>
-        ))
-      }
+      {projects.map((project) => (
+        <li>
+          <h2>
+            {project.title} <code>{project.slug}</code>
+            {project.featured && <span class="badge">featured</span>}
+          </h2>
+          <p>{project.summary}</p>
+          <p class="meta">
+            stack: {project.stack.length > 0 ? project.stack.join(", ") : "none yet"}
+            {" · "}
+            repo: {project.repoUrl ?? "not set"}
+          </p>
+        </li>
+      ))}
     </ol>
   </main>
 </BaseLayout>

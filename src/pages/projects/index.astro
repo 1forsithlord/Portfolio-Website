@@ -29,20 +29,18 @@ const stats = getSiteStats();
       <ProjectCarousel projects={featured} client:visible />
     </section>
 
-    {
-      more.length > 0 && (
-        <section aria-labelledby="more-heading" data-reveal style="--reveal-index:2">
-          <SectionHeader id="more-heading" title="More" />
-          <ul class="grid">
-            {more.map((project, i) => (
-              <li data-reveal style={`--reveal-index:${i}`}>
-                <ProjectCard project={project} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
+    {more.length > 0 && (
+      <section aria-labelledby="more-heading" data-reveal style="--reveal-index:2">
+        <SectionHeader id="more-heading" title="More" />
+        <ul class="grid">
+          {more.map((project, i) => (
+            <li data-reveal style={`--reveal-index:${i}`}>
+              <ProjectCard project={project} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </main>
 </BaseLayout>
 
