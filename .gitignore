@@ -16,3 +16,7 @@ npm-debug.log*
 
 # macOS
 .DS_Store
+
+# test output
+playwright-report/
+test-results/
