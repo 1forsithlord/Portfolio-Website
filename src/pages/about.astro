@@ -3,6 +3,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import SectionHeader from "@/components/ui/SectionHeader.astro";
 import Tag from "@/components/ui/Tag.astro";
 import { Terminal } from "@/components/islands/Terminal";
+import { ActivityFeed } from "@/components/islands/ActivityFeed";
+import { activity } from "@/content/activity";
 
 const focus = ["Machine learning", "Full-stack", "Systems"];
 ---
@@ -35,6 +37,14 @@ const focus = ["Machine learning", "Full-stack", "Systems"];
       </ul>
       <SectionHeader level={2} title="Try the terminal" description="Type help to see what it can do. It is a shortcut to the rest of the site." />
       <Terminal client:visible />
+      {
+        activity.length > 0 && (
+          <>
+            <SectionHeader level={2} title="Recent activity" description="Dated entries I add by hand." />
+            <ActivityFeed items={activity} client:visible />
+          </>
+        )
+      }
     </div>
   </main>
 </BaseLayout>
