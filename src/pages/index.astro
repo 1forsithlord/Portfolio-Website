@@ -14,10 +14,10 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
 ---
 
 <BaseLayout title={`${site.name} — Developer Portfolio`}>
-  <main class="journey" data-journey-root data-planets={String(featured.length)}>
+  <main class="journey" id="main" data-journey-root data-planets={String(featured.length)}>
     <GalaxyBackground />
-    <a class="skip" href="#featured-title">
-      Skip to featured work
+    <a class="skip" href="#main">
+      Skip to main content
     </a>
 
     <div class="track" data-track>
@@ -145,10 +145,11 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
     color: var(--color-text);
     border-radius: var(--radius-pill);
     transform: translateY(-200%);
+    transition: transform var(--duration-base) var(--ease-standard);
   }
 
   .skip:focus {
-    transform: none;
+    transform: translateY(0);
   }
 
   /* Without JavaScript, or without WebGL: a plain stack of cards. */
