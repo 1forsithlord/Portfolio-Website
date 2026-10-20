@@ -1,0 +1,126 @@
+/* Styles for the React overlay islands (Modal and CommandPalette). */
+
+.modal {
+  /* base.css resets every margin to 0, so set the position here: centred horizontally, a little above middle. */
+  margin: 12dvh auto auto;
+  width: min(40rem, calc(100% - var(--space-8)));
+  max-height: min(70dvh, 40rem);
+  padding: 0;
+  overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+}
+
+.modal::backdrop {
+  background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  -webkit-backdrop-filter: var(--backdrop-soft);
+  backdrop-filter: var(--backdrop-soft);
+}
+
+@supports not (background: color-mix(in srgb, red 50%, transparent)) {
+  .modal::backdrop {
+    background: var(--color-bg);
+    opacity: 0.85;
+  }
+}
+
+.modal[open] {
+  animation: modal-in var(--duration-base) var(--ease-emphasized);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.palette {
+  display: grid;
+}
+
+.palette-input {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  border-radius: 0;
+}
+
+.palette-input:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -2px 0 var(--color-focus);
+}
+
+.palette-list {
+  display: grid;
+  gap: var(--space-1);
+  max-height: 50dvh;
+  padding: var(--space-2);
+  margin: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.palette-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.palette-item[data-active="true"] {
+  background: var(--color-accent-soft);
+}
+
+.palette-group,
+.palette-empty {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.palette-empty {
+  padding: var(--space-4);
+}
+
+.palette-trigger {
+  position: fixed;
+  right: var(--space-4);
+  /* Moved to top-right so it doesn't overlap the terminal on the About page */
+  top: calc(var(--nav-height) + var(--space-4));
+  z-index: var(--z-nav);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  -webkit-backdrop-filter: var(--backdrop-soft);
+  backdrop-filter: var(--backdrop-soft);
+  cursor: pointer;
+}
+
+.palette-trigger kbd {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}

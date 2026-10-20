@@ -1,0 +1,58 @@
+---
+interface Props {
+  label: string;
+  /** A real count, or null. Null renders nothing, so no placeholder number ever shows. */
+  value: number | null;
+  index?: number;
+}
+
+const { label, value, index = 0 } = Astro.props;
+---
+
+{value !== null && (
+  <div class="reveal" data-reveal style={`--reveal-index:${index}`}>
+    <div class="stat">
+      <dt>{label}</dt>
+      <dd>
+        <span data-count-to={value}>{value.toLocaleString("en-US")}</span>
+      </dd>
+    </div>
+  </div>
+)}
+
+<style>
+  /* Outer element is revealed (transformed). Inner element owns backdrop-filter. Same Safari rule as GlassPanel. */
+  .reveal {
+    height: 100%;
+  }
+
+  .stat {
+    display: grid;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-4) var(--space-6);
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass);
+    -webkit-backdrop-filter: var(--backdrop-soft);
+    backdrop-filter: var(--backdrop-soft);
+  }
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    line-height: var(--leading-snug);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+  }
+</style>

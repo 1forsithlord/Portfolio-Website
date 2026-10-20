@@ -1,0 +1,404 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Button from "@/components/ui/Button.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import Tag from "@/components/ui/Tag.astro";
+import GalaxyBackground from "@/components/galaxy/GalaxyBackground.astro";
+import { site } from "@/content/site";
+import { projects } from "@/content/projects";
+
+const featured = projects.filter((project) => project.featured);
+const pad = (n: number) => String(n).padStart(2, "0");
+// One label per chapter, in order: hero, one per planet, closing card.
+const labels = ["Home", ...featured.map((project) => project.title), "Featured work"];
+---
+
+<BaseLayout title={`${site.name} — Developer Portfolio`}>
+  <main class="journey" id="main" data-journey-root data-planets={String(featured.length)}>
+    <GalaxyBackground />
+    <a class="skip" href="#main">
+      Skip to main content
+    </a>
+
+    <div class="track" data-track>
+      <div class="chapter" data-chapter="0" data-kind="hero" data-place="left">
+        <GlassPanel as="section">
+          <section aria-labelledby="hero-title">
+            <p class="eyebrow">{site.role}</p>
+            <h1 id="hero-title">{site.name}</h1>
+            <p class="pitch">{site.tagline}</p>
+            <div class="actions">
+              <Button variant="primary" href="/projects">
+                View projects
+              </Button>
+              <Button href="/contact">Contact me</Button>
+            </div>
+            <p class="cue" data-cue>
+              Scroll to explore
+            </p>
+          </section>
+        </GlassPanel>
+      </div>
+
+      {featured.map((project, i) => (
+        <div
+          class="chapter"
+          data-chapter={String(i + 1)}
+          data-kind="planet"
+          data-place={i % 2 === 0 ? "left" : "right"}
+        >
+          <GlassPanel as="article">
+            <p class="index">
+              {pad(i + 1)} / {pad(featured.length)}
+            </p>
+            <h2 class="project-title">{project.title}</h2>
+            <p class="summary">{project.summary}</p>
+            <ul class="stack" aria-label="Stack">
+              {project.stack.map((item) => (
+                <li>
+                  <Tag>{item}</Tag>
+                </li>
+              ))}
+            </ul>
+            <div class="actions">
+              <Button variant="primary" size="sm" href={`/projects/${project.slug}`}>
+                Case study
+              </Button>
+              {project.repoUrl && (
+                <Button size="sm" href={project.repoUrl} external>
+                  Source
+                </Button>
+              )}
+            </div>
+          </GlassPanel>
+        </div>
+      ))}
+
+      <div class="chapter" data-chapter={String(featured.length + 1)} data-kind="out" data-place="left">
+        <GlassPanel as="section">
+          <h2 id="featured-title" class="kicker">
+            Featured work
+          </h2>
+          <ul class="list">
+            {featured.map((project) => (
+              <li>
+                <a href={`/projects/${project.slug}`}>
+                  <span class="name">{project.title}</span>
+                  <span class="arrow" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div class="actions">
+            <Button variant="primary" href="/projects">
+              All projects
+            </Button>
+            <Button href="/contact">Contact me</Button>
+          </div>
+        </GlassPanel>
+      </div>
+    </div>
+
+    <nav class="rail" aria-label="Chapters" data-rail>
+      <ul>
+        {labels.map((label) => (
+          <li>
+            <button type="button" class="dot" data-rail-item aria-label={label} title={label} />
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="tags" aria-hidden="true">
+      {featured.map((project, i) => (
+        <a class="planet-tag" data-planet-tag={String(i)} href={`/projects/${project.slug}`} tabindex="-1">
+          {project.title}
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { enhanceHomeJourney } from "@/lib/journey/enhance";
+
+  const root = document.querySelector<HTMLElement>("[data-journey-root]");
+  if (root) enhanceHomeJourney(root);
+</script>
+
+<style>
+  .journey {
+    position: relative;
+    max-width: var(--container-max);
+    margin-inline: auto;
+  }
+
+  .skip {
+    position: absolute;
+    left: var(--space-4);
+    top: var(--space-4);
+    z-index: var(--z-modal);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-radius: var(--radius-pill);
+    transform: translateY(-200%);
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+
+  .skip:focus {
+    transform: translateY(0);
+  }
+
+  /* Without JavaScript, or without WebGL: a plain stack of cards. */
+  .track {
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-16) var(--space-4) var(--space-24);
+  }
+
+  .chapter {
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  /* Enhanced: one card per stop, placed along the scroll track and centred on the viewport at its stop. */
+  .journey[data-mode="enhanced"] .track {
+    display: block;
+    height: calc(var(--journey-screens, 8) * 100lvh);
+    padding: 0;
+  }
+
+  .journey[data-mode="enhanced"] .chapter {
+    position: absolute;
+    top: calc(var(--s, 0) * 100lvh + 50lvh);
+    left: var(--space-4);
+    width: min(30rem, calc(100% - 5.5rem));
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+
+  /* Narrow screens: planet cards sit low, away from the planet that is drawn above them. */
+  .journey[data-mode="enhanced"] .chapter[data-kind="planet"] {
+    top: calc(var(--s, 0) * 100lvh + 100lvh - var(--space-6));
+    transform: translateY(-100%);
+    max-height: 52lvh;
+    overflow: auto;
+  }
+
+  /* Wide screens: the planet sits on the side opposite its card. The rail takes the right edge. */
+  @media (min-width: 900px) {
+    .journey[data-mode="enhanced"] .chapter {
+      width: min(30rem, 36vw);
+      top: calc(var(--s, 0) * 100lvh + 50lvh);
+      transform: translateY(-50%);
+      max-height: none;
+      overflow: visible;
+    }
+
+    .journey[data-mode="enhanced"] .chapter[data-place="left"] {
+      left: var(--space-4);
+      right: auto;
+    }
+
+    .journey[data-mode="enhanced"] .chapter[data-place="right"] {
+      left: auto;
+      right: var(--space-16);
+    }
+
+    /* The hero carries the name, so it gets more room than the project cards. */
+    .journey[data-mode="enhanced"] .chapter[data-kind="hero"] {
+      width: min(38rem, 46vw);
+    }
+  }
+
+  .rail {
+    display: none;
+  }
+
+  .journey[data-mode="enhanced"] .rail {
+    display: block;
+    position: fixed;
+    right: var(--space-2);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: var(--z-tags);
+  }
+
+  .rail ul {
+    display: grid;
+    list-style: none;
+    padding: 0;
+  }
+
+  .dot {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--color-text-muted);
+  }
+
+  .dot::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.45;
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      opacity var(--duration-base) var(--ease-standard);
+  }
+
+  .dot[aria-current="true"]::before {
+    opacity: 1;
+    transform: scale(1.6);
+    background: var(--color-accent);
+  }
+
+  .tags {
+    display: none;
+  }
+
+  .journey[data-mode="enhanced"] .tags {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-tags);
+    pointer-events: none;
+  }
+
+  .planet-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    background: var(--glass-fill);
+    -webkit-backdrop-filter: var(--backdrop-soft);
+    backdrop-filter: var(--backdrop-soft);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text);
+    white-space: nowrap;
+    text-decoration: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  h1 {
+    margin-top: var(--space-4);
+    font-size: var(--text-hero);
+    font-weight: 400;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .pitch {
+    margin-top: var(--space-4);
+    max-width: 38ch;
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .cue {
+    margin-top: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .index {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .project-title {
+    margin-top: var(--space-2);
+    font-size: var(--text-2xl);
+    font-weight: 400;
+  }
+
+  .summary {
+    margin-top: var(--space-3);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .list {
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+
+  .list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 2.75rem;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+
+  .list a:hover {
+    color: var(--color-accent);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+</style>

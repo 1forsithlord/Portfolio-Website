@@ -1,0 +1,89 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import Tag from "@/components/ui/Tag.astro";
+import Button from "@/components/ui/Button.astro";
+import { projects } from "@/content/projects";
+
+export const getStaticPaths = (() =>
+  projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }))) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { project } = Astro.props as Props;
+---
+
+<BaseLayout title={`${project.title} — Yash Pratap Singh`}>
+  <main>
+    <a class="back" href="/projects">
+      ← All projects
+    </a>
+    <GlassPanel as="section" strength="strong">
+      <div class="body">
+        <SectionHeader level={1} title={project.title} description={project.summary} />
+        {project.stack.length > 0 && (
+          <ul class="stack" aria-label="Tech stack">
+            {project.stack.map((item) => (
+              <li>
+                <Tag>{item}</Tag>
+              </li>
+            ))}
+          </ul>
+        )}
+        {(project.repoUrl || project.demoUrl) && (
+          <div class="actions">
+            {project.repoUrl && (
+              <Button variant="primary" href={project.repoUrl} external>
+                Code
+              </Button>
+            )}
+            {project.demoUrl && (
+              <Button href={project.demoUrl} external>
+                Live demo
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </GlassPanel>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+    max-width: var(--measure);
+    margin-inline: auto;
+    padding: var(--space-12) var(--space-4);
+  }
+
+  .back {
+    color: var(--color-text-muted);
+  }
+
+  .body {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

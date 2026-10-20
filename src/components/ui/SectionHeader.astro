@@ -1,0 +1,53 @@
+---
+interface Props {
+  title: string;
+  level?: 1 | 2 | 3;
+  id?: string;
+  eyebrow?: string;
+  description?: string;
+}
+
+const { title, level = 2, id, eyebrow, description } = Astro.props;
+const Heading = `h${level}` as "h1" | "h2" | "h3";
+---
+
+<header class="section-header" data-level={level}>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <Heading class="title" id={id}>
+    {title}
+  </Heading>
+  {description && <p class="description">{description}</p>}
+</header>
+
+<style>
+  .section-header {
+    display: grid;
+    gap: var(--space-2);
+    max-width: var(--measure);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .title {
+    font-size: var(--text-xl);
+  }
+
+  .section-header[data-level="2"] .title {
+    font-size: var(--text-2xl);
+  }
+
+  .section-header[data-level="1"] .title {
+    font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
+  }
+
+  .description {
+    color: var(--color-text-muted);
+  }
+</style>
