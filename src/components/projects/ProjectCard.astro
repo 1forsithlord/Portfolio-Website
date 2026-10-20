@@ -1,5 +1,6 @@
 ---
 import type { Project } from "@/content/projects";
+import { getRepoStats } from "@/lib/github";
 import GlassPanel from "@/components/ui/GlassPanel.astro";
 import Tag from "@/components/ui/Tag.astro";
 import Button from "@/components/ui/Button.astro";
@@ -9,12 +10,25 @@ interface Props {
 }
 
 const { project } = Astro.props;
+// Null when there is no repo or the snapshot has no valid entry. The card then shows exactly what projects.ts holds.
+const stats = getRepoStats(project.repoUrl);
+const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null;
 ---
 
 <GlassPanel as="article">
   <div class="body">
     <h3><a href={`/projects/${project.slug}`}>{project.title}</a></h3>
     <p class="summary">{project.summary}</p>
+    {
+      stats && (
+        <ul class="meta" aria-label="Repository">
+          {stats.archived && <li>Archived</li>}
+          <li>★ {stats.stars}</li>
+          {stats.language && <li>{stats.language}</li>}
+          {pushedOn && <li>Updated {pushedOn}</li>}
+        </ul>
+      )
+    }
     {
       project.stack.length > 0 && (
         <ul class="stack" aria-label="Tech stack">
@@ -60,6 +74,17 @@ const { project } = Astro.props;
   }
 
   .summary {
+    color: var(--color-text-muted);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
 

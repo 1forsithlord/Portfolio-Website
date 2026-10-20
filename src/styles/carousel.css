@@ -5,13 +5,10 @@
   display: grid;
   gap: var(--space-4);
   color: var(--color-text);
-  
-  /* NEW: Establishes a stacking context for the glow */
   position: relative;
   isolation: isolate; 
 }
 
-/* NEW: The colorful aura behind the glass cards */
 .carousel::before {
   content: "";
   position: absolute;
@@ -26,7 +23,6 @@
   pointer-events: none;
 }
 
-/* Scroll-snap does the moving. Padding centres the first and last card. */
 .track {
   display: flex;
   gap: var(--space-6);
@@ -42,7 +38,6 @@
   display: none;
 }
 
-/* The outer element carries the 3D transform. The inner surface owns backdrop-filter (Safari). */
 .slot {
   flex: 0 0 var(--slot);
   scroll-snap-align: center;
@@ -74,22 +69,17 @@
   min-height: 20rem;
   padding: var(--space-6);
   color: var(--color-text);
-  
-  /* Reverted to the clean glass token so the new background aura shines through */
   background: var(--glass-fill);
-  
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
   -webkit-backdrop-filter: var(--backdrop-soft);
   backdrop-filter: var(--backdrop-soft);
-  
   transition:
     border-color var(--duration-base) var(--ease-standard),
     box-shadow var(--duration-base) var(--ease-standard);
 }
 
-/* The centered card gets a vibrant pink neon glow */
 .face-button[aria-current="true"] .surface {
   border-color: var(--color-accent);
   box-shadow: 
@@ -119,6 +109,19 @@
   overflow: hidden;
   color: var(--color-text-muted);
   text-wrap: pretty;
+}
+
+/* NEW: Styling for the GitHub stats */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
 }
 
 .hint {
@@ -162,7 +165,6 @@
   color: var(--color-text-muted);
 }
 
-/* Detail: the same glass, expanded in place. */
 .detail {
   display: grid;
   padding-block: var(--space-4);

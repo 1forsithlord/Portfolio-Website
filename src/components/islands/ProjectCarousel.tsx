@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Project } from "../../content/projects";
+import { getRepoStats } from "../../lib/github"; // NEW: Import the build-time stats
 import "../../styles/carousel.css";
 
 /** Cards further than this from the centre are hidden, so only five ever draw. */
@@ -14,12 +15,6 @@ interface ProjectCarouselProps {
   projects: readonly Project[];
 }
 
-/**
-  A horizontal carousel of glass cards. Browse mode scrolls with CSS scroll-snap;
-  JavaScript only turns the scroll position into the 3D pose of each card.
-  Activating the centred card expands it in place. Escape or Close returns to browse.
-  No autoplay, no looping, no carousel library.
-*/
 export function ProjectCarousel({ projects }: ProjectCarouselProps) {
   const [mode, setMode] = useState<Mode>("browse");
   const [index, setIndex] = useState(0);
@@ -29,7 +24,6 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const count = projects.length;
 
-  /** Distance between two neighbouring slots, in pixels: slot width plus the gap. */
   const stepPx = (): number => {
     const track = trackRef.current;
     const first = track?.querySelector<HTMLElement>(".slot");
@@ -50,7 +44,6 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
     scrollToIndex(next);
   };
 
-  // Browse: turn the scroll position into a fractional position for the 3D pose.
   useEffect(() => {
     const track = trackRef.current;
     if (!track || mode !== "browse") return;
@@ -74,14 +67,12 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
     };
   }, [mode, count]);
 
-  // Returning from detail: the track has just been created at scroll 0, so put it back on the card.
   useLayoutEffect(() => {
     if (mode !== "browse") return;
     const track = trackRef.current;
     if (track) track.scrollLeft = index * stepPx();
   }, [mode]);
 
-  // Focus follows the mode: the heading when expanded, the card when collapsed.
   useEffect(() => {
     if (mode === "detail") {
       headingRef.current?.focus();
@@ -112,6 +103,9 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
   if (mode === "detail") {
     const project = projects[index];
     if (!project) return null;
+    const stats = getRepoStats(project.repoUrl); // NEW
+    const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
+
     return (
       <div ref={rootRef} className="carousel" data-mode="detail" role="region" aria-roledescription="carousel" aria-label="Featured projects" onKeyDown={onKeyDown}>
         <article className="detail" aria-labelledby="detail-title">
@@ -123,6 +117,17 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
               {project.title}
             </h2>
             <p className="detail-summary">{project.summary}</p>
+            
+            {/* NEW: Render stats in detail view */}
+            {stats && (
+              <ul className="meta" aria-label="Repository">
+                {stats.archived && <li>Archived</li>}
+                <li>★ {stats.stars}</li>
+                {stats.language && <li>{stats.language}</li>}
+                {pushedOn && <li>Updated {pushedOn}</li>}
+              </ul>
+            )}
+
             <ul className="stack" aria-label="Tech stack">
               {project.stack.map((item) => (
                 <li key={item} className="chip-tag">
@@ -162,6 +167,10 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
           const offset = clamp(distance, -MAX_OFFSET, MAX_OFFSET);
           const amount = Math.abs(offset);
           const hidden = Math.abs(distance) > MAX_OFFSET;
+          
+          const stats = getRepoStats(project.repoUrl); // NEW
+          const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
+
           return (
             <div
               key={project.slug}
@@ -189,6 +198,17 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
                   </span>
                   <span className="title">{project.title}</span>
                   <span className="summary">{project.summary}</span>
+                  
+                  {/* NEW: Render stats on the card face */}
+                  {stats && (
+                    <span className="meta">
+                      {stats.archived && <span>Archived</span>}
+                      <span>★ {stats.stars}</span>
+                      {stats.language && <span>{stats.language}</span>}
+                      {pushedOn && <span>Updated {pushedOn}</span>}
+                    </span>
+                  )}
+
                   <span className="hint">{i === index ? "Expand" : "Show"}</span>
                 </span>
               </button>
