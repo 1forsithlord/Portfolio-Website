@@ -1,0 +1,13 @@
+/* Entrance motion for [data-reveal]. Durations and easing come from tokens, so reduced motion zeroes them. */
+[data-reveal] {
+  transition-property: opacity, transform;
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-emphasized);
+  transition-delay: calc(var(--reveal-index, 0) * var(--duration-fast));
+}
+
+/* Hidden only once JavaScript has confirmed it can reveal. Without JS, everything stays visible. */
+.reveal-ready [data-reveal]:not(.is-in) {
+  opacity: 0;
+  transform: translateY(0.75rem);
+}

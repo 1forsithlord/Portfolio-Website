@@ -39,7 +39,10 @@ function repoKey(url: string): string | null {
 
 // Validated once at load. An entry that does not match the shape is dropped, not rendered.
 const repoIndex = new Map<string, RepoStats>();
-const snapshot = snapshotJson as unknown as { repos?: Record<string, unknown> };
+const snapshot = snapshotJson as unknown as {
+  repos?: Record<string, unknown>;
+  profile?: { publicRepos?: unknown } | null;
+};
 for (const [key, value] of Object.entries(snapshot.repos ?? {})) {
   if (isRepoStats(value)) repoIndex.set(key.toLowerCase(), value);
 }
@@ -49,4 +52,15 @@ export function getRepoStats(repoUrl: string | null): RepoStats | null {
   if (!repoUrl) return null;
   const key = repoKey(repoUrl);
   return key ? (repoIndex.get(key) ?? null) : null;
+}
+
+/** Every valid repo in the snapshot. */
+export function getTrackedRepos(): RepoStats[] {
+  return [...repoIndex.values()];
+}
+
+/** Public repo count from the profile snapshot, or null if the profile was never fetched. */
+export function getPublicRepoCount(): number | null {
+  const count = snapshot.profile?.publicRepos;
+  return typeof count === "number" ? count : null;
 }

@@ -2,29 +2,40 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ProjectCard from "@/components/projects/ProjectCard.astro";
 import SectionHeader from "@/components/ui/SectionHeader.astro";
+import StatCounter from "@/components/ui/StatCounter.astro";
 import { ProjectCarousel } from "@/components/islands/ProjectCarousel";
 import { projects } from "@/content/projects";
+import { getSiteStats } from "@/lib/site-stats";
+import "@/styles/motion.css";
 
 const featured = projects.filter((project) => project.featured);
 const more = projects.filter((project) => !project.featured);
+const stats = getSiteStats();
 ---
 
 <BaseLayout title="Projects — Yash Pratap Singh">
   <main>
-    <SectionHeader level={1} title="Projects" />
+    <section class="intro" data-reveal style="--reveal-index:0">
+      <SectionHeader level={1} title="Projects" />
+      <dl class="stat-list" aria-label="Project stats">
+        <StatCounter label="Projects" value={stats.projectCount} index={0} />
+        <StatCounter label="Public repos" value={stats.publicRepos} index={1} />
+        <StatCounter label={`Stars across ${stats.trackedRepos} repos`} value={stats.totalStars} index={2} />
+      </dl>
+    </section>
 
-    <section aria-labelledby="featured-heading">
+    <section aria-labelledby="featured-heading" data-reveal style="--reveal-index:1">
       <SectionHeader id="featured-heading" title="Featured" />
       <ProjectCarousel projects={featured} client:visible />
     </section>
 
     {
       more.length > 0 && (
-        <section aria-labelledby="more-heading">
+        <section aria-labelledby="more-heading" data-reveal style="--reveal-index:2">
           <SectionHeader id="more-heading" title="More" />
           <ul class="grid">
-            {more.map((project) => (
-              <li>
+            {more.map((project, i) => (
+              <li data-reveal style={`--reveal-index:${i}`}>
                 <ProjectCard project={project} />
               </li>
             ))}
@@ -35,6 +46,13 @@ const more = projects.filter((project) => !project.featured);
   </main>
 </BaseLayout>
 
+<script>
+  import { enableReveals } from "@/lib/reveal";
+  import { animateCounters } from "@/lib/counter";
+  enableReveals();
+  animateCounters();
+</script>
+
 <style>
   main {
     display: grid;
@@ -42,11 +60,24 @@ const more = projects.filter((project) => !project.featured);
     max-width: var(--container-max);
     margin-inline: auto;
     padding: var(--space-12) var(--space-4);
+    /* Clips the carousel aurora (it bleeds 10% past its box) at the page edge, so no horizontal scroll. */
+    overflow-x: clip;
   }
 
   section {
     display: grid;
     gap: var(--space-6);
+  }
+
+  .intro {
+    gap: var(--space-8);
+  }
+
+  .stat-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-4);
+    margin: 0;
   }
 
   .grid {
