@@ -10,7 +10,7 @@ export function createGalaxyRenderer(container: HTMLElement, options: RendererOp
   canvas.setAttribute("aria-hidden", "true");
   canvas.style.cssText = "display:block;width:100%;height:100%";
 
-  let ctx: WebGLRenderingContext | null = null;
+  let ctx: WebGLRenderingContext | null;
   try {
     ctx = canvas.getContext("webgl", { antialias: false, alpha: false });
   } catch {
