@@ -1,9 +1,0 @@
-{
-  "_comment": "Map a GitHub repo name to a YouTube video ID and/or an override description and stack list. Any repo not listed here still shows normally, just without a 'Watch demo' button. Delete the _comment key if you like — it's ignored.",
-
-  "example-repo-name": {
-    "videoId": "dQw4w9WgXcQ",
-    "description": "A short, punchier description than what's in the GitHub repo, if you want one.",
-    "stack": ["React", "Node.js", "PostgreSQL"]
-  }
-}
