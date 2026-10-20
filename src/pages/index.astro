@@ -135,21 +135,28 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
     margin-inline: auto;
   }
 
+  /* Standard accessibility pattern: hide off-screen until focused */
   .skip {
     position: absolute;
-    left: var(--space-4);
-    top: var(--space-4);
-    z-index: var(--z-modal);
-    padding: var(--space-2) var(--space-4);
-    background: var(--color-surface);
-    color: var(--color-text);
-    border-radius: var(--radius-pill);
-    transform: translateY(-200%);
-    transition: transform var(--duration-base) var(--ease-standard);
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 
   .skip:focus {
-    transform: translateY(0);
+    position: fixed;
+    top: var(--space-4);
+    left: var(--space-4);
+    width: auto;
+    height: auto;
+    overflow: visible;
+    z-index: var(--z-modal);
+    background: var(--color-surface);
+    color: var(--color-text);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
   }
 
   /* Without JavaScript, or without WebGL: a plain stack of cards. */
