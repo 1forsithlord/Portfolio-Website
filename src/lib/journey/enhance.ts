@@ -1,3 +1,4 @@
+import { GALAXY_RESET_EVENT } from "../events";
 import { clamp } from "../galaxy/math";
 import { SETTLED_ROTATE } from "../galaxy/motion";
 import { startGalaxy } from "../galaxy/controller";
@@ -55,6 +56,10 @@ export function enhanceHomeJourney(root: HTMLElement): (() => void) | null {
     return () => el.removeEventListener("click", onClick);
   });
 
+  // The terminal asks for a fresh growth with "galaxy reset".
+  const onReset = () => galaxy.restartMotion();
+  window.addEventListener(GALAXY_RESET_EVENT, onReset);
+
   let raf = 0;
   let current = -1;
 
@@ -111,6 +116,7 @@ export function enhanceHomeJourney(root: HTMLElement): (() => void) | null {
   return () => {
     cancelAnimationFrame(raf);
     unbind.forEach((off) => off());
+    window.removeEventListener(GALAXY_RESET_EVENT, onReset);
     galaxy.destroy();
     store.destroy();
   };

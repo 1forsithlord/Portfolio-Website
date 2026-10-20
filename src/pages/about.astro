@@ -2,6 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import SectionHeader from "@/components/ui/SectionHeader.astro";
 import Tag from "@/components/ui/Tag.astro";
+import { Terminal } from "@/components/islands/Terminal";
 
 const focus = ["Machine learning", "Full-stack", "Systems"];
 ---
@@ -32,6 +33,8 @@ const focus = ["Machine learning", "Full-stack", "Systems"];
           ))
         }
       </ul>
+      <SectionHeader level={2} title="Try the terminal" description="Type help to see what it can do. It is a shortcut to the rest of the site." />
+      <Terminal client:visible />
     </div>
   </main>
 </BaseLayout>

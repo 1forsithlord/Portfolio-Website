@@ -1,7 +1,7 @@
 import { buildTimeline, cameraAt, heroCamera, planetAmount } from "../journey/timeline";
 import type { JourneyLayout } from "../journey/layout";
 import type { JourneyStore } from "../journey/store";
-import { MOTION, SETTLED_ROTATE, STILL_TWINKLE, easeOutClock } from "./motion";
+import { GROWTH, SETTLED_ROTATE, STILL_TWINKLE, applyGrowth, easeOutClock, growthAt } from "./motion";
 import { makePlanets } from "./planets";
 import { createGalaxyRenderer } from "./renderer";
 import { TIERS, lowerTier, pickTier, readTierEnv } from "./tiers";
@@ -10,7 +10,7 @@ import type { Camera, FrameState, GalaxyRenderer } from "./types";
 
 /** Longest single step of the clock. A hitch or a hidden tab cannot eat the whole easing. */
 const MAX_STEP_SEC = 0.25;
-/** After the motion has stopped only the stars move, so draw at about 30 fps. */
+/** After the growth has settled only rotation and twinkle move, so draw at about 30 fps. */
 const SETTLED_FRAME_MS = 30;
 /** Frames ignored after a (re)start, then frames averaged to judge speed. */
 const WARMUP_FRAMES = 20;
@@ -43,11 +43,11 @@ export type GalaxyRunState = "running" | "paused" | "still" | "recovering" | "of
 export interface GalaxyStatus {
   tier: TierName;
   state: GalaxyRunState;
-  /** True once the eased motion has stopped. Twinkle continues. */
+  /** True once the growth has settled. Rotation and twinkle continue. */
   settled: boolean;
   /** Seconds of visible running time since the last (re)start. */
   elapsed: number;
-  /** Current position on the motion clock. */
+  /** Current position on the rotation clock. */
   rotate: number;
   /** Frames drawn by the loop since start. Divide the change by the time for fps. */
   drawn: number;
@@ -59,7 +59,7 @@ export interface GalaxyStatus {
 
 export interface GalaxyController {
   status(): GalaxyStatus;
-  /** Play the intro motion again from the start. */
+  /** Play the intro growth again from the start. */
   restartMotion(): void;
   destroy(): void;
 }
@@ -128,6 +128,7 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
     } else {
       Object.assign(cam, heroCam);
     }
+    applyGrowth(cam, reduced ? 1 : growthAt(elapsed));
     cam.yaw += frameState.tRotate * DRIFT;
     renderer.draw(frameState);
   }
@@ -200,8 +201,8 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
     raf = requestAnimationFrame(frame);
     if (!renderer || lost) return;
     const since = Math.max(now - lastNow, 0);
-    // Slow the loop down only when nothing but twinkle is moving. Scrolling needs full rate.
-    const capped = elapsed >= MOTION.durationSec && !(journey && journey.store.moving());
+    // Slow the loop down only when nothing but rotation and twinkle are moving. Scrolling needs full rate.
+    const capped = elapsed >= GROWTH.durationSec && !(journey && journey.store.moving());
     if (capped && since < SETTLED_FRAME_MS) return;
     lastNow = now;
     const dt = Math.min(since / 1000, MAX_STEP_SEC);
@@ -293,7 +294,7 @@ export function startGalaxy(options: GalaxyOptions): GalaxyController | null {
       return {
         tier: tierName,
         state,
-        settled: elapsed >= MOTION.durationSec,
+        settled: elapsed >= GROWTH.durationSec,
         elapsed,
         rotate: easeOutClock(elapsed),
         drawn,
