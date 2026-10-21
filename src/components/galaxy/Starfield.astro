@@ -1,0 +1,89 @@
+<!--
+  A CSS-only starfield for every page except the home galaxy. Three layers at
+  different sizes and speeds: the far layer drifts slowest, the near layer
+  fastest, so the stars show parallax. Only the near layer twinkles.
+-->
+<div class="starfield" aria-hidden="true">
+  <span class="layer layer-far"></span>
+  <span class="layer layer-mid"></span>
+  <span class="layer layer-near"></span>
+</div>
+
+<style>
+  .starfield {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-behind);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /*
+    Each layer is larger than the viewport, so its edges stay covered while it
+    drifts. It moves by exactly one 400px tile per cycle, so the loop is seamless.
+  */
+  .layer {
+    position: absolute;
+    inset: -400px;
+    background-size: 400px 400px;
+    will-change: transform;
+    animation: drift var(--drift-far) linear infinite;
+  }
+
+  .layer-far {
+    background-image:
+      radial-gradient(circle at 23px 41px, var(--star-far) 0, transparent 1px),
+      radial-gradient(circle at 121px 97px, var(--star-far) 0, transparent 1px),
+      radial-gradient(circle at 74px 158px, var(--star-far) 0, transparent 1px),
+      radial-gradient(circle at 160px 22px, var(--star-far) 0, transparent 1px),
+      radial-gradient(circle at 301px 333px, var(--star-far) 0, transparent 1px),
+      radial-gradient(circle at 357px 265px, var(--star-far) 0, transparent 1px);
+    animation-duration: var(--drift-far);
+  }
+
+  .layer-mid {
+    background-image:
+      radial-gradient(circle at 96px 62px, var(--star-mid) 0, transparent 1.5px),
+      radial-gradient(circle at 210px 130px, var(--star-mid) 0, transparent 1.5px),
+      radial-gradient(circle at 300px 260px, var(--star-mid) 0, transparent 1.5px),
+      radial-gradient(circle at 380px 60px, var(--star-mid) 0, transparent 1.5px),
+      radial-gradient(circle at 40px 300px, var(--star-mid) 0, transparent 1.5px);
+    animation-duration: var(--drift-mid);
+  }
+
+  .layer-near {
+    background-image:
+      radial-gradient(circle at 150px 300px, var(--star-near) 0, transparent 2px),
+      radial-gradient(circle at 330px 170px, var(--star-near) 0, transparent 2px),
+      radial-gradient(circle at 60px 370px, var(--star-near) 0, transparent 2px),
+      radial-gradient(circle at 260px 390px, var(--star-near) 0, transparent 2px);
+    animation:
+      drift var(--drift-near) linear infinite,
+      twinkle var(--duration-twinkle) ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-400px, -400px, 0);
+    }
+  }
+
+  @keyframes twinkle {
+    from {
+      opacity: 0.5;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Stop the drift and the twinkle. The stars stay where they are. */
+  @media (prefers-reduced-motion: reduce) {
+    .layer {
+      animation: none;
+    }
+  }
+</style>

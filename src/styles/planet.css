@@ -1,0 +1,121 @@
+/*
+  Vector planets. Each planet has up to three layers, in this order:
+  the ring behind (ringed only), the body, and the ring in front (ringed only).
+
+  The body holds a texture SVG twice its width and a shading SVG. The texture
+  moves by one body width per cycle, and its pattern repeats every 100 units,
+  so the spin loops without a seam.
+*/
+.planet {
+  position: absolute;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  /* Behind the text: the glass surface is a stacking context, so this sits above its fill and below the copy. */
+  z-index: var(--z-behind);
+  pointer-events: none;
+}
+
+.planet[data-size="sm"] {
+  --planet-size: 3rem;
+}
+
+.planet[data-size="md"] {
+  --planet-size: 4.5rem;
+}
+
+.planet-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: block;
+}
+
+/* The body is 64% of the planet, so the ring has room to pass around it. */
+.planet-body {
+  position: absolute;
+  top: 18%;
+  left: 18%;
+  width: 64%;
+  height: 64%;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--planet-base);
+}
+
+.planet-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  display: block;
+  animation: planet-spin var(--planet-spin) linear infinite;
+}
+
+.planet-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.planet-band-a {
+  fill: none;
+  stroke: var(--planet-band-a);
+}
+
+.planet-band-b {
+  fill: none;
+  stroke: var(--planet-band-b);
+}
+
+.planet-spot-a {
+  fill: var(--planet-spot-a);
+}
+
+.planet-spot-b {
+  fill: var(--planet-spot-b);
+}
+
+.planet-ring-line {
+  fill: none;
+  stroke: var(--planet-ring);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.stop-hi {
+  stop-color: var(--planet-highlight);
+}
+
+.stop-clear {
+  stop-color: transparent;
+}
+
+.stop-soft {
+  stop-color: var(--planet-shade-soft);
+}
+
+.stop-dark {
+  stop-color: var(--planet-shade);
+}
+
+@keyframes planet-spin {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planet-texture {
+    animation: none;
+  }
+}
