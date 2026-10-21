@@ -15,11 +15,12 @@ import Button from "@/components/ui/Button.astro";
 
     <GlassPanel>
       <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <!-- Replace with your actual Web3Forms Access Key -->
+        <!-- Your Web3Forms Access Key -->
         <input type="hidden" name="access_key" value="c352fa8e-e91f-40ba-94dd-d0d66dd76971" />
 
         <fieldset id="form-fieldset">
           <legend class="visually-hidden">Contact form</legend>
+
           <label for="name">Name</label>
           <input type="text" id="name" name="name" autocomplete="name" required />
 
@@ -36,7 +37,6 @@ import Button from "@/components/ui/Button.astro";
           </div>
         </fieldset>
 
-        <!-- Success/Error message container -->
         <p id="form-status" class="status" aria-live="polite"></p>
       </form>
     </GlassPanel>
@@ -48,7 +48,8 @@ import Button from "@/components/ui/Button.astro";
   const status = document.getElementById("form-status") as HTMLParagraphElement;
   const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
 
-  if (form && status) {
+  // We check for submitBtn here to prevent crashes if the button is missing
+  if (form && status && submitBtn) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(form);
@@ -73,8 +74,10 @@ import Button from "@/components/ui/Button.astro";
           status.textContent = "Something went wrong. Please try again.";
           status.classList.add("error");
         }
-      } catch {
-        status.textContent = "Something went wrong. Please try again.";
+      } catch (error) {
+        // Log the actual error to the console for debugging
+        console.error("Form submission failed:", error);
+        status.textContent = "Something went wrong. Please check your connection and try again.";
         status.classList.add("error");
       } finally {
         submitBtn.disabled = false;
