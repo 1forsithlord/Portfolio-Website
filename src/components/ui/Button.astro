@@ -6,9 +6,18 @@ interface Props {
   external?: boolean;
   type?: "button" | "submit";
   disabled?: boolean;
+  id?: string;
 }
 
-const { variant = "secondary", size = "md", href, external = false, type = "button", disabled = false } = Astro.props;
+const {
+  variant = "secondary",
+  size = "md",
+  href,
+  external = false,
+  type = "button",
+  disabled = false,
+  id,
+} = Astro.props;
 ---
 
 {href ? (
@@ -19,11 +28,12 @@ const { variant = "secondary", size = "md", href, external = false, type = "butt
     href={href}
     target={external ? "_blank" : undefined}
     rel={external ? "noopener noreferrer" : undefined}
+    id={id}
   >
     <slot />
   </a>
 ) : (
-  <button class="button" data-variant={variant} data-size={size} type={type} disabled={disabled}>
+  <button class="button" data-variant={variant} data-size={size} type={type} disabled={disabled} id={id}>
     <slot />
   </button>
 )}

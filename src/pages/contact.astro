@@ -12,27 +12,80 @@ import Button from "@/components/ui/Button.astro";
       title="Get in touch"
       description="Have a project in mind, or just want to talk shop? Send a note — I read everything that comes through here."
     />
-    <p class="notice">The form is not connected yet in this rebuild.</p>
+
     <GlassPanel>
-      <form>
-        <fieldset disabled>
+      <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+        <!-- Your Web3Forms Access Key -->
+        <input type="hidden" name="access_key" value="c352fa8e-e91f-40ba-94dd-d0d66dd76971" />
+
+        <fieldset id="form-fieldset">
           <legend class="visually-hidden">Contact form</legend>
+
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" autocomplete="name" />
+          <input type="text" id="name" name="name" autocomplete="name" required />
+
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" autocomplete="email" />
+          <input type="email" id="email" name="email" autocomplete="email" required />
+
           <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5"></textarea>
+          <textarea id="message" name="message" rows="5" required></textarea>
+
           <div class="actions">
-            <Button variant="primary" type="submit" disabled>
+            <Button id="submit-btn" variant="primary" type="submit">
               Send message
             </Button>
           </div>
         </fieldset>
+
+        <p id="form-status" class="status" aria-live="polite"></p>
       </form>
     </GlassPanel>
   </main>
 </BaseLayout>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const status = document.getElementById("form-status") as HTMLParagraphElement;
+  const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+
+  // We check for submitBtn here to prevent crashes if the button is missing
+  if (form && status && submitBtn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+      status.textContent = "";
+      status.className = "status";
+
+      try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          status.textContent = "Message sent successfully! I'll get back to you soon.";
+          status.classList.add("success");
+          form.reset();
+        } else {
+          status.textContent = "Something went wrong. Please try again.";
+          status.classList.add("error");
+        }
+      } catch (error) {
+        // Log the actual error to the console for debugging
+        console.error("Form submission failed:", error);
+        status.textContent = "Something went wrong. Please check your connection and try again.";
+        status.classList.add("error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send message";
+      }
+    });
+  }
+</script>
 
 <style>
   main {
@@ -41,10 +94,6 @@ import Button from "@/components/ui/Button.astro";
     max-width: var(--measure);
     margin-inline: auto;
     padding: var(--space-12) var(--space-4);
-  }
-
-  .notice {
-    color: var(--color-apricot);
   }
 
   fieldset {
@@ -59,9 +108,17 @@ import Button from "@/components/ui/Button.astro";
   textarea {
     width: 100%;
     padding: var(--space-3);
-    background: var(--color-surface);
+    background: var(--color-bg);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-sm);
+    color: var(--color-text);
+    transition: border-color var(--duration-base) var(--ease-standard);
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--color-text-muted);
   }
 
   .actions {
@@ -75,5 +132,19 @@ import Button from "@/components/ui/Button.astro";
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  .status {
+    margin-top: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .status.success {
+    color: #4ade80; /* green */
+  }
+
+  .status.error {
+    color: #f87171; /* red */
   }
 </style>
