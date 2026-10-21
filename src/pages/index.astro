@@ -13,7 +13,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 const labels = ["Home", ...featured.map((project) => project.title), "Featured work"];
 ---
 
-<BaseLayout title={`${site.name} — Developer Portfolio`}>
+<BaseLayout title={`${site.name} — Developer Portfolio`} starfield={false}>
   <main class="journey" id="main" data-journey-root data-planets={String(featured.length)}>
     <GalaxyBackground />
     <a class="skip" href="#main">

@@ -9,20 +9,6 @@
   isolation: isolate;
 }
 
-.carousel::before {
-  content: "";
-  position: absolute;
-  inset: 0 -10%;
-  z-index: -1;
-  background:
-    radial-gradient(circle at 20% 50%, var(--glow-pink), transparent 60%),
-    radial-gradient(circle at 80% 50%, var(--glow-violet), transparent 60%),
-    radial-gradient(circle at 50% 50%, var(--color-lagoon), transparent 50%);
-  opacity: 0.4;
-  filter: blur(60px);
-  pointer-events: none;
-}
-
 .track {
   display: flex;
   gap: var(--space-6);
@@ -48,6 +34,7 @@
 }
 
 .face-button {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
@@ -62,6 +49,7 @@
 }
 
 .surface {
+  position: relative;
   display: grid;
   align-content: start;
   gap: var(--space-2);
@@ -80,12 +68,33 @@
     box-shadow var(--duration-base) var(--ease-standard);
 }
 
+/*
+  Active card: a 1px gradient border made with background-clip, so the border
+  follows the rounded corners. The inner layer is the glass fill, the outer layer
+  is the gradient.
+*/
 .face-button[aria-current="true"] .surface {
-  border-color: var(--color-accent);
-  box-shadow:
-    0 0 0 1px var(--color-accent),
-    0 0 40px var(--glow-pink),
-    var(--shadow-glass);
+  border-color: transparent;
+  background:
+    linear-gradient(var(--glass-fill), var(--glass-fill)) padding-box,
+    linear-gradient(135deg, var(--gradient-blue), var(--gradient-pink)) border-box;
+}
+
+/*
+  Soft galaxy halo, behind the card. It sits on the face button, not on the
+  surface: the surface is a stacking context, so a negative z-index child of it
+  would paint over its fill. Here it paints behind the card and shows only at the edges.
+*/
+.face-button[aria-current="true"]::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--gradient-blue), var(--gradient-pink));
+  filter: blur(8px);
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 .index {
@@ -112,7 +121,6 @@
   text-wrap: pretty;
 }
 
-/* NEW: Styling for the GitHub stats */
 .meta {
   display: flex;
   flex-wrap: wrap;
@@ -132,7 +140,7 @@
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
 }
 
 .controls {
@@ -223,7 +231,7 @@
 
 .link-button.primary {
   color: var(--color-accent-ink);
-  background: var(--color-accent);
+  background: var(--color-text);
   border-color: transparent;
 }
 
@@ -236,4 +244,10 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* The planet sits bottom-right, so keep the summary and meta clear of it. */
+.face-button .summary,
+.face-button .meta {
+  padding-right: 5.5rem;
 }

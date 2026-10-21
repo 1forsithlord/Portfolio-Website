@@ -1,0 +1,78 @@
+---
+import "../../styles/planet.css";
+
+interface Props {
+  variant?: "striped" | "spotted" | "ringed";
+  size?: "sm" | "md";
+}
+
+const { variant = "striped", size = "sm" } = Astro.props;
+
+// A wave is four identical 50-unit periods, so 200 units. Its texture loops every 100.
+const wave = (y: number, amplitude: number) =>
+  `M0 ${y} c12.5 ${-amplitude} 37.5 ${amplitude} 50 0 s37.5 ${amplitude} 50 0 s37.5 ${amplitude} 50 0 s37.5 ${amplitude} 50 0`;
+
+const STRIPES = [
+  { y: 24, cls: "planet-band-a", width: 8 },
+  { y: 48, cls: "planet-band-b", width: 5 },
+  { y: 72, cls: "planet-band-a", width: 8 },
+];
+
+const RINGED_BANDS = [
+  { y: 34, cls: "planet-band-b", width: 3 },
+  { y: 50, cls: "planet-band-a", width: 2.5 },
+  { y: 66, cls: "planet-band-b", width: 3 },
+];
+
+// Craters are drawn in the first 100 units and copied at +100, so the texture repeats cleanly.
+const CRATERS = [
+  { x: 28, y: 34, r: 11, cls: "planet-spot-a" },
+  { x: 66, y: 60, r: 14, cls: "planet-spot-a" },
+  { x: 86, y: 18, r: 6, cls: "planet-spot-a" },
+  { x: 34, y: 28, r: 4, cls: "planet-spot-b" },
+  { x: 72, y: 52, r: 5, cls: "planet-spot-b" },
+  { x: 80, y: 16, r: 2.5, cls: "planet-spot-b" },
+];
+
+const RING_TILT = "rotate(-18 50 50)";
+---
+
+<span class="planet" data-variant={variant} data-size={size} aria-hidden="true">
+  {variant === "ringed" && (
+    <svg class="planet-svg" viewBox="0 0 100 100" focusable="false">
+      <g transform={RING_TILT}>
+        <ellipse cx="50" cy="50" rx="48" ry="13" class="planet-ring-line" />
+      </g>
+    </svg>
+  )}
+  <span class="planet-body">
+    <svg class="planet-texture" viewBox="0 0 200 100" focusable="false">
+      {variant === "striped" &&
+        STRIPES.map((band) => <path d={wave(band.y, 7)} class={band.cls} stroke-width={band.width} />)}
+      {variant === "ringed" &&
+        RINGED_BANDS.map((band) => <path d={wave(band.y, 4)} class={band.cls} stroke-width={band.width} />)}
+      {variant === "spotted" &&
+        CRATERS.flatMap((crater) =>
+          [0, 100].map((dx) => <circle cx={crater.x + dx} cy={crater.y} r={crater.r} class={crater.cls} />),
+        )}
+    </svg>
+    <svg class="planet-shade" viewBox="0 0 100 100" focusable="false">
+      <defs>
+        <radialGradient id="planet-shade" cx="30%" cy="28%" r="85%">
+          <stop offset="0" class="stop-hi" />
+          <stop offset="0.45" class="stop-clear" />
+          <stop offset="0.8" class="stop-soft" />
+          <stop offset="1" class="stop-dark" />
+        </radialGradient>
+      </defs>
+      <circle cx="50" cy="50" r="50" fill="url(#planet-shade)" />
+    </svg>
+  </span>
+  {variant === "ringed" && (
+    <svg class="planet-svg" viewBox="0 0 100 100" focusable="false">
+      <g transform={RING_TILT}>
+        <path d="M2 50 A48 13 0 0 0 98 50" class="planet-ring-line" />
+      </g>
+    </svg>
+  )}
+</span>

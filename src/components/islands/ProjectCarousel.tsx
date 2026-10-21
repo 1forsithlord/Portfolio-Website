@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Project } from "../../content/projects";
-import { getRepoStats } from "../../lib/github"; // NEW: Import the build-time stats
+import { getRepoStats } from "../../lib/github";
 import "../../styles/carousel.css";
+import { Planet } from "../ui/Planet";
 
 /** Cards further than this from the centre are hidden, so only five ever draw. */
 const MAX_OFFSET = 2;
@@ -103,8 +104,8 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
   if (mode === "detail") {
     const project = projects[index];
     if (!project) return null;
-    const stats = getRepoStats(project.repoUrl); // NEW
-    const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
+    const stats = getRepoStats(project.repoUrl);
+    const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null;
 
     return (
       <div
@@ -126,7 +127,6 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
             </h2>
             <p className="detail-summary">{project.summary}</p>
 
-            {/* NEW: Render stats in detail view */}
             {stats && (
               <ul className="meta" aria-label="Repository">
                 {stats.archived && <li>Archived</li>}
@@ -184,8 +184,8 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
           const amount = Math.abs(offset);
           const hidden = Math.abs(distance) > MAX_OFFSET;
 
-          const stats = getRepoStats(project.repoUrl); // NEW
-          const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null; // NEW
+          const stats = getRepoStats(project.repoUrl);
+          const pushedOn = stats?.pushedAt ? stats.pushedAt.slice(0, 10) : null;
 
           return (
             <div
@@ -209,13 +209,13 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
                 onClick={() => (i === index ? setMode("detail") : go(i))}
               >
                 <span className="surface">
+                  <Planet variant="striped" size="md" />
                   <span className="index">
                     {pad(i + 1)} / {pad(count)}
                   </span>
                   <span className="title">{project.title}</span>
                   <span className="summary">{project.summary}</span>
 
-                  {/* NEW: Render stats on the card face */}
                   {stats && (
                     <span className="meta">
                       {stats.archived && <span>Archived</span>}

@@ -11,40 +11,62 @@
   Components must use these. No raw font-size values outside this file.
 */
 :root {
-  /* color: surfaces and text */
-  --color-bg: #06050d;
-  --color-surface: #14102b;
-  --color-surface-raised: #1c1740;
-  --color-text: #ece9f7;
-  --color-text-muted: #aaa6c8;
-  --color-line: rgba(190, 180, 255, 0.16);
+  /* color: surfaces and text (pure black) */
+  --color-bg: #000000;
+  --color-surface: #111111;
+  --color-surface-raised: #1a1a1a;
+  --color-text: #ffffff;
+  --color-text-muted: #a1a1aa;
+  --color-line: rgba(255, 255, 255, 0.1);
 
-  /* color: accents */
-  --color-accent: #ff9ccf;
-  --color-accent-soft: rgba(255, 156, 207, 0.16);
-  --color-accent-ink: #1d0a22;
-  --color-violet: #9d8cff;
-  --color-apricot: #ffc29a;
-  --color-lagoon: #7ee8e0;
-  --color-focus: var(--color-violet);
+  /* color: accents. White and grey on the page; the blue and pink below are used only for the galaxy glow and active card. */
+  --color-accent: #ffffff;
+  --color-accent-soft: rgba(255, 255, 255, 0.08);
+  --color-accent-ink: #000000;
+  --color-violet: #a1a1aa;
+  --color-apricot: #d4d4d8;
+  --color-lagoon: #d4d4d8;
+  --color-focus: #ffffff;
 
-  /* page background gradient (used on every route except the galaxy home) */
-  --glow-violet: rgba(157, 140, 255, 0.22);
-  --glow-pink: rgba(255, 143, 199, 0.16);
-  --gradient-page:
-    radial-gradient(60rem 40rem at 15% -10%, var(--glow-violet), transparent 60%),
-    radial-gradient(50rem 36rem at 90% 0%, var(--glow-pink), transparent 55%);
+  /* galaxy glow */
+  --glow-blue: rgba(56, 189, 248, 0.3);
+  --glow-pink: rgba(255, 156, 207, 0.3);
+  --glow-violet: transparent;
 
-  /* glass */
-  --glass-fill: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --shadow-glass: 0 24px 64px rgba(0, 0, 0, 0.4);
+  /* solid galaxy colors for the active card's gradient border and halo */
+  --gradient-blue: #38bdf8;
+  --gradient-pink: #ff9ccf;
+
+  /* page background: flat black, no gradient */
+  --gradient-page: none;
+
+  /* glass: solid dark fill, no drop shadow */
+  --glass-fill: var(--color-surface);
+  --glass-border: var(--color-line);
+  --shadow-glass: none;
   --blur-soft: 12px;
   --blur-strong: 24px;
   --saturate-soft: 120%;
   --saturate-strong: 140%;
   --backdrop-soft: blur(var(--blur-soft)) saturate(var(--saturate-soft));
   --backdrop-strong: blur(var(--blur-strong)) saturate(var(--saturate-strong));
+
+  /* starfield */
+  --star-far: rgba(255, 255, 255, 0.35);
+  --star-mid: rgba(255, 255, 255, 0.6);
+  --star-near: rgba(214, 232, 255, 0.95);
+
+  /* planet: flat vector palette, in the galaxy's blue and pink */
+  --planet-base: #1b2456;
+  --planet-band-a: #3b4fb0;
+  --planet-band-b: #e88bc0;
+  --planet-spot-a: #0d1333;
+  --planet-spot-b: #5b6fd0;
+  --planet-ring: #ffc29a;
+  --planet-highlight: rgba(255, 255, 255, 0.22);
+  --planet-shade-soft: rgba(0, 0, 0, 0.3);
+  --planet-shade: rgba(0, 0, 0, 0.85);
+  --planet-spin: 20s;
 
   /* fonts */
   --font-display: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
@@ -100,6 +122,10 @@
   --duration-base: 200ms;
   --duration-slow: 360ms;
   --duration-scene: 700ms;
+  --duration-twinkle: 6s;
+  --drift-far: 160s;
+  --drift-mid: 100s;
+  --drift-near: 60s;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
