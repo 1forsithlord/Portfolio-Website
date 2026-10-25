@@ -30,6 +30,16 @@ import Button from "@/components/ui/Button.astro";
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="5" required></textarea>
 
+          <!-- Honeypot anti-spam field -->
+          <input
+            type="checkbox"
+            name="botcheck"
+            class="hidden"
+            style="display: none;"
+            tabindex="-1"
+            autocomplete="off"
+          />
+
           <div class="actions">
             <Button id="submit-btn" variant="primary" type="submit">
               Send message
