@@ -22,7 +22,7 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.0",
+    "@astrojs/react": "^7.1.1",
     "astro": "^7.4.1",
     "react": "19.3.0",
     "react-dom": "19.3.0"
