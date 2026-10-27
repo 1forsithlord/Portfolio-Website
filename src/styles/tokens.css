@@ -11,15 +11,16 @@
   Components must use these. No raw font-size values outside this file.
 */
 :root {
-  /* color: surfaces and text (pure black) */
-  --color-bg: #000000;
-  --color-surface: #111111;
-  --color-surface-raised: #1a1a1a;
+  /* color: surfaces and text (Midnight Black) */
+  --color-bg: #03040d; /* Exact Midnight Black from reference */
+  --color-surface: #0a0c16; /* Slightly lighter midnight for cards */
+  --color-surface-raised: #131627;
   --color-text: #ffffff;
-  --color-text-muted: #a1a1aa;
+  --color-text-muted: #94a3b8;
   --color-line: rgba(255, 255, 255, 0.1);
 
-  /* color: accents. White and grey on the page; the blue and pink below are used only for the galaxy glow and active card. */
+  /* color: accent (Electric Cobalt) */
+  --color-cobalt: #1559cb; /* Exact Electric Cobalt from reference */
   --color-accent: #ffffff;
   --color-accent-soft: rgba(255, 255, 255, 0.08);
   --color-accent-ink: #000000;
@@ -28,16 +29,13 @@
   --color-lagoon: #d4d4d8;
   --color-focus: #ffffff;
 
-  /* galaxy glow */
+  /* glows */
+  --glow-cobalt: rgba(21, 89, 203, 0.45); /* Glow matches the new cobalt */
   --glow-blue: rgba(56, 189, 248, 0.3);
   --glow-pink: rgba(255, 156, 207, 0.3);
   --glow-violet: transparent;
 
-  /* solid galaxy colors for the active card's gradient border and halo */
-  --gradient-blue: #38bdf8;
-  --gradient-pink: #ff9ccf;
-
-  /* page background: flat black, no gradient */
+  /* page background: flat, no gradient */
   --gradient-page: none;
 
   /* glass: solid dark fill, no drop shadow */
@@ -51,10 +49,10 @@
   --backdrop-soft: blur(var(--blur-soft)) saturate(var(--saturate-soft));
   --backdrop-strong: blur(var(--blur-strong)) saturate(var(--saturate-strong));
 
-  /* starfield */
+  /* starfield: the near layer has a slightly cool, blue tint */
   --star-far: rgba(255, 255, 255, 0.35);
   --star-mid: rgba(255, 255, 255, 0.6);
-  --star-near: rgba(214, 232, 255, 0.95);
+  --star-near: rgba(180, 210, 255, 0.95);
 
   /* planet: flat vector palette, in the galaxy's blue and pink */
   --planet-base: #1b2456;
