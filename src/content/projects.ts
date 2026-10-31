@@ -16,6 +16,8 @@ export interface Project {
   demoUrl: string | null;
   /** YouTube video id for a demo, or null. */
   videoId: string | null;
+  /** Optional metrics to show on the project card. */
+  metrics?: readonly string[];
 }
 
 export const projects: readonly Project[] = [
@@ -23,10 +25,10 @@ export const projects: readonly Project[] = [
     slug: "zero-lora",
     title: "Zero-LoRA",
     summary:
-      "My final-year project: continual learning for CLIP with per-task LoRA adapters that can be merged, so a vision-language model keeps learning new tasks without forgetting the old ones.",
-    stack: ["CLIP", "LoRA", "Continual learning"],
+      "Similarity-drift-regularized LoRA adaptation of CLIP ViT-B/16 for zero-shot retention. Investigating whether raw image-text similarity-geometry regularization improves the trade-off between downstream task accuracy and zero-shot retention.",
+    stack: ["CLIP", "LoRA", "Continual learning", "Python", "PyTorch"],
     featured: true,
-    repoUrl: null, // not pushed to GitHub yet
+    repoUrl: "https://github.com/1forsithlord/zero-lora",
     demoUrl: null,
     videoId: null,
   },
@@ -78,10 +80,11 @@ export const projects: readonly Project[] = [
     slug: "saarthi",
     title: "SAARTHI",
     summary:
-      "My Smart India Hackathon 2026 project: an AI/ML dead-reckoning navigation PWA that fuses phone sensors and GNSS through an adaptive UKF/EKF core, so navigation keeps working where GPS drops out.",
-    stack: ["PWA", "UKF/EKF", "Sensor fusion"],
-    featured: false,
-    repoUrl: null,
+      "A real-time dead-reckoning engine that ensures navigation when GPS fails. Fuses smartphone IMU data with a Causal Transformer, EKF, and OSM to achieve sub-3 km/h speed error and 5.6° heading error in blind, GNSS-denied environments.",
+    stack: ["PyTorch", "Causal Transformer", "EKF", "Sensor Fusion", "OpenStreetMap"],
+    metrics: ["2.37 km/h Speed Error", "5.6° Heading Error", "SIH 2026 Finalist"],
+    featured: true,
+    repoUrl: "https://github.com/1forsithlord/AI-Intelligent-Dead-Reckoning",
     demoUrl: null,
     videoId: null,
   },
