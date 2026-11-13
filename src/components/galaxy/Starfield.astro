@@ -51,12 +51,13 @@
     animation-duration: var(--drift-mid);
   }
 
+  /* Two of the near stars are cobalt, for a subtle blue twinkle. The rest are cool white. */
   .layer-near {
     background-image:
       radial-gradient(circle at 150px 300px, var(--star-near) 0, transparent 2px),
-      radial-gradient(circle at 330px 170px, var(--star-near) 0, transparent 2px),
+      radial-gradient(circle at 330px 170px, var(--color-cobalt) 0, transparent 2px),
       radial-gradient(circle at 60px 370px, var(--star-near) 0, transparent 2px),
-      radial-gradient(circle at 260px 390px, var(--star-near) 0, transparent 2px);
+      radial-gradient(circle at 260px 390px, var(--color-cobalt) 0, transparent 2px);
     animation:
       drift var(--drift-near) linear infinite,
       twinkle var(--duration-twinkle) ease-in-out infinite alternate;

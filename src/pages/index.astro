@@ -124,8 +124,23 @@ const labels = ["Home", ...featured.map((project) => project.title), "Featured w
 <script>
   import { enhanceHomeJourney } from "@/lib/journey/enhance";
 
-  const root = document.querySelector<HTMLElement>("[data-journey-root]");
-  if (root) enhanceHomeJourney(root);
+  // Runs on the first load and again after each client-side navigation here.
+  // The journey is torn down before every swap, so the galaxy never outlives its markup.
+  let teardown: (() => void) | null = null;
+
+  const mount = () => {
+    const root = document.querySelector<HTMLElement>("[data-journey-root]");
+    // A root that already has data-mode was enhanced on this page load, so skip it.
+    if (!root || root.dataset.mode) return;
+    teardown = enhanceHomeJourney(root);
+  };
+
+  mount();
+  document.addEventListener("astro:page-load", mount);
+  document.addEventListener("astro:before-swap", () => {
+    teardown?.();
+    teardown = null;
+  });
 </script>
 
 <style>

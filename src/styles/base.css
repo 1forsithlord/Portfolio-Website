@@ -20,7 +20,7 @@ html {
 
 body {
   min-height: 100dvh;
-  background: var(--gradient-page), var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-base);
@@ -53,4 +53,10 @@ textarea {
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
+}
+
+/* Highlighted text: cobalt behind white. */
+::selection {
+  background: var(--color-cobalt);
+  color: var(--color-text);
 }
