@@ -65,23 +65,24 @@
   backdrop-filter: var(--backdrop-soft);
   transition:
     border-color var(--duration-base) var(--ease-standard),
-    box-shadow var(--duration-base) var(--ease-standard);
+    box-shadow var(--duration-base) var(--ease-standard),
+    transform var(--duration-slow) var(--ease-emphasized);
+  /* Set by the card on mouse move, relative to the card. */
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  /* Set on mouse move, and back to flat on leave. Only the active card uses them. */
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
 }
 
-/*
-  Active card: a 1px gradient border made with background-clip, so the border
-  follows the rounded corners. The inner layer is the glass fill, the outer layer
-  is the gradient.
-*/
+/* Active card: a solid cobalt border, and a slight 3D tilt that follows the pointer. */
 .face-button[aria-current="true"] .surface {
-  border-color: transparent;
-  background:
-    linear-gradient(var(--glass-fill), var(--glass-fill)) padding-box,
-    linear-gradient(135deg, var(--gradient-blue), var(--gradient-pink)) border-box;
+  border-color: var(--color-cobalt);
+  transform: perspective(60rem) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
 }
 
 /*
-  Soft galaxy halo, behind the card. It sits on the face button, not on the
+  Cobalt halo, behind the active card. It sits on the face button, not on the
   surface: the surface is a stacking context, so a negative z-index child of it
   would paint over its fill. Here it paints behind the card and shows only at the edges.
 */
@@ -91,10 +92,33 @@
   inset: -2px;
   z-index: -1;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--gradient-blue), var(--gradient-pink));
-  filter: blur(8px);
-  opacity: 0.8;
+  background: var(--glow-cobalt);
+  filter: blur(12px);
   pointer-events: none;
+}
+
+/*
+  Mouse spotlight: a soft cobalt glow that follows the pointer over the card.
+  It sits above the glass fill and below the text, like the planet.
+*/
+.surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    color-mix(in srgb, var(--color-cobalt) 22%, transparent),
+    transparent 45%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.face-button:hover .surface::after {
+  opacity: 1;
 }
 
 .index {
@@ -250,4 +274,11 @@
 .face-button .summary,
 .face-button .meta {
   padding-right: 5.5rem;
+}
+
+/* Safety net: the tilt is also skipped in the script under reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .face-button[aria-current="true"] .surface {
+    transform: none;
+  }
 }
