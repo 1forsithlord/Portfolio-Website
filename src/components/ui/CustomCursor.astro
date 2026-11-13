@@ -1,0 +1,152 @@
+<div class="cursor-ship" id="cursor-ship" aria-hidden="true">
+  <!-- A sleek, geometric spaceship pointing right -->
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M21 12L3 20L6 12L3 4L21 12Z"
+      fill="var(--color-cobalt)"
+      stroke="var(--color-text)"
+      stroke-width="1.5"
+      stroke-linejoin="round"
+    />
+    <circle cx="6" cy="12" r="1.5" fill="var(--color-text)" />
+  </svg>
+</div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+<style>
+  /* Hide the custom cursor on touch devices */
+  @media (pointer: coarse) {
+    .cursor-ship,
+    .cursor-ring {
+      display: none !important;
+    }
+  }
+
+  /* Hide the default browser cursor when the custom one is active */
+  @media (pointer: fine) {
+    body,
+    a,
+    button,
+    [role="button"],
+    input,
+    textarea {
+      cursor: none !important;
+    }
+  }
+
+  .cursor-ship {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+    z-index: 10000;
+    /* Center the ship on the exact mouse coordinates */
+    transform: translate(-50%, -50%);
+    will-change: transform;
+    /* Smoothly rotate the ship as it moves */
+    transition: transform 0.1s linear;
+  }
+
+  /* The targeting ring that follows the ship */
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    border: 1px dashed var(--color-cobalt);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition:
+      width var(--duration-base) var(--ease-standard),
+      height var(--duration-base) var(--ease-standard),
+      border-style var(--duration-base) var(--ease-standard),
+      background-color var(--duration-base) var(--ease-standard);
+    will-change: transform;
+  }
+
+  /* When hovering over clickable elements, the ring locks on */
+  .cursor-ring.is-hovering {
+    width: 60px;
+    height: 60px;
+    border-style: solid;
+    border-color: var(--color-cobalt);
+    background-color: var(--glow-cobalt);
+  }
+</style>
+
+<script>
+  const ship = document.getElementById("cursor-ship") as HTMLDivElement;
+  const ring = document.getElementById("cursor-ring") as HTMLDivElement;
+
+  if (window.matchMedia("(pointer: fine)").matches) {
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let shipX = mouseX;
+    let shipY = mouseY;
+    let ringX = mouseX;
+    let ringY = mouseY;
+    let currentAngle = 0;
+
+    window.addEventListener(
+      "mousemove",
+      (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      },
+      { passive: true },
+    );
+
+    const animate = () => {
+      // Calculate how far the ship needs to move
+      const dx = mouseX - shipX;
+      const dy = mouseY - shipY;
+
+      // Smoothly glide the ship towards the mouse
+      shipX += dx * 0.35;
+      shipY += dy * 0.35;
+
+      // Calculate the angle the ship should face based on movement
+      if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+        const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        // Smoothly rotate towards the target angle (shortest path)
+        let angleDiff = targetAngle - currentAngle;
+        while (angleDiff > 180) angleDiff -= 360;
+        while (angleDiff < -180) angleDiff += 360;
+
+        currentAngle += angleDiff * 0.15;
+      }
+
+      // Apply position and rotation to the ship
+      ship.style.transform = `translate(${shipX}px, ${shipY}px) translate(-50%, -50%) rotate(${currentAngle}deg)`;
+
+      // The ring trails slightly further behind for a depth effect
+      ringX += (mouseX - ringX) * 0.1;
+      ringY += (mouseY - ringY) * 0.1;
+      ring.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+
+      requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+
+    // Hover logic for interactive elements
+    document.addEventListener("mouseover", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"], input, textarea')) {
+        ring.classList.add("is-hovering");
+      }
+    });
+
+    document.addEventListener("mouseout", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"], input, textarea')) {
+        ring.classList.remove("is-hovering");
+      }
+    });
+  }
+</script>

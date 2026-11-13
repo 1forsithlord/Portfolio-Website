@@ -3,11 +3,13 @@ import "@/styles/tokens.css";
 import "@/styles/base.css";
 import Nav from "@/components/layout/Nav.astro";
 import Starfield from "@/components/galaxy/Starfield.astro";
+import NoiseOverlay from "@/components/ui/NoiseOverlay.astro";
+import CustomCursor from "@/components/ui/CustomCursor.astro";
 import { CommandPalette } from "@/components/islands/CommandPalette";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
-  /** On by default. The home page turns it off, because its WebGL galaxy draws the background. */
   starfield?: boolean;
 }
 
@@ -27,11 +29,22 @@ const { title, starfield = true } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <ClientRouter />
   </head>
   <body>
     {starfield && <Starfield />}
     <Nav />
     <slot />
     <CommandPalette client:load />
+    <NoiseOverlay />
+    <CustomCursor />
   </body>
 </html>
+
+<style is:global>
+  /* Cross-fade between pages. The whole page, main included, fades over the slow duration. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--duration-slow);
+  }
+</style>
