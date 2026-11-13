@@ -32,12 +32,12 @@ const { title, starfield = true } = Astro.props;
     <ClientRouter />
   </head>
   <body>
-    {starfield && <Starfield />}
+    {starfield && <Starfield transition:persist />}
     <Nav />
     <slot />
     <CommandPalette client:load />
-    <NoiseOverlay />
-    <CustomCursor />
+    <NoiseOverlay transition:persist />
+    <CustomCursor transition:persist />
   </body>
 </html>
 
