@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import type { Project } from "../../content/projects";
 import { getRepoStats } from "../../lib/github";
 import "../../styles/carousel.css";
@@ -6,9 +6,39 @@ import { Planet } from "../ui/Planet";
 
 /** Cards further than this from the centre are hidden, so only five ever draw. */
 const MAX_OFFSET = 2;
+/** The most the active card tilts, in degrees, on each axis. */
+const MAX_TILT = 10;
 
 const clamp = (value: number, low: number, high: number): number => Math.min(high, Math.max(low, value));
 const pad = (n: number): string => String(n).padStart(2, "0");
+const reduceMotion = (): boolean => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+  Runs on every card. Moves the spotlight to the pointer, and, when reduced
+  motion is off, sets the tilt from the pointer's place on the card. Only the
+  active card applies the tilt (see carousel.css), so side cards only glow.
+*/
+const onCardMove = (event: MouseEvent<HTMLSpanElement>) => {
+  const card = event.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  card.style.setProperty("--mouse-x", `${x}px`);
+  card.style.setProperty("--mouse-y", `${y}px`);
+
+  if (reduceMotion()) return;
+  // -1 at the left or top edge, +1 at the right or bottom edge.
+  const nx = (x / (rect.width || 1)) * 2 - 1;
+  const ny = (y / (rect.height || 1)) * 2 - 1;
+  card.style.setProperty("--tilt-y", `${(nx * MAX_TILT).toFixed(2)}deg`);
+  card.style.setProperty("--tilt-x", `${(-ny * MAX_TILT).toFixed(2)}deg`);
+};
+
+/** Springs the card back to flat. The CSS transition on the surface does the easing. */
+const onCardLeave = (event: MouseEvent<HTMLSpanElement>) => {
+  event.currentTarget.style.setProperty("--tilt-x", "0deg");
+  event.currentTarget.style.setProperty("--tilt-y", "0deg");
+};
 
 type Mode = "browse" | "detail";
 
@@ -208,7 +238,7 @@ export function ProjectCarousel({ projects }: ProjectCarouselProps) {
                 aria-label={i === index ? `Open ${project.title}` : `Show ${project.title}`}
                 onClick={() => (i === index ? setMode("detail") : go(i))}
               >
-                <span className="surface">
+                <span className="surface" onMouseMove={onCardMove} onMouseLeave={onCardLeave}>
                   <Planet variant="striped" size="md" />
                   <span className="index">
                     {pad(i + 1)} / {pad(count)}

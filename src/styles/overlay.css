@@ -83,8 +83,10 @@
   cursor: pointer;
 }
 
+/* The arrow-selected command: a cobalt tint with white text. */
 .palette-item[data-active="true"] {
-  background: var(--color-accent-soft);
+  background: color-mix(in srgb, var(--color-cobalt) 15%, transparent);
+  color: var(--color-text);
 }
 
 .palette-group,
@@ -123,4 +125,17 @@
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
+}
+
+/*  NEW: Mobile adjustments */
+@media (max-width: 768px) {
+  /* Hide the keyboard shortcut on devices without physical keyboards */
+  .palette-trigger kbd {
+    display: none;
+  }
+
+  /* Tighten the padding slightly so it looks like a clean, compact pill */
+  .palette-trigger {
+    padding: var(--space-2) var(--space-3);
+  }
 }

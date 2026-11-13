@@ -18,6 +18,8 @@ const {
   disabled = false,
   id,
 } = Astro.props;
+// Only enabled primary buttons pull toward the cursor.
+const magnetic = variant === "primary" && !disabled;
 ---
 
 {href ? (
@@ -25,6 +27,7 @@ const {
     class="button"
     data-variant={variant}
     data-size={size}
+    data-magnetic={magnetic ? "" : undefined}
     href={href}
     target={external ? "_blank" : undefined}
     rel={external ? "noopener noreferrer" : undefined}
@@ -33,10 +36,70 @@ const {
     <slot />
   </a>
 ) : (
-  <button class="button" data-variant={variant} data-size={size} type={type} disabled={disabled} id={id}>
+  <button
+    class="button"
+    data-variant={variant}
+    data-size={size}
+    data-magnetic={magnetic ? "" : undefined}
+    type={type}
+    disabled={disabled}
+    id={id}
+  >
     <slot />
   </button>
 )}
+
+<script>
+  /*
+    Magnetic primary buttons. Within RADIUS of a button's centre, the button drifts
+    toward the cursor, by a fraction of the distance and capped at MAX_SHIFT.
+    Outside the radius it returns to centre, and the CSS transition on transform
+    makes that a spring. One window listener serves every button, so client
+    navigation needs no re-binding.
+  */
+  const RADIUS = 140;
+  const STRENGTH = 0.3;
+  const MAX_SHIFT = 8;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  const clamp = (value: number, limit: number): number => Math.max(-limit, Math.min(limit, value));
+
+  const place = (el: HTMLElement, x: number, y: number) => {
+    el.style.transform = x === 0 && y === 0 ? "" : `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+  };
+
+  const reset = () => {
+    for (const el of document.querySelectorAll<HTMLElement>("[data-magnetic]")) place(el, 0, 0);
+  };
+
+  window.addEventListener(
+    "mousemove",
+    (event) => {
+      const moving = !reducedMotion.matches;
+      for (const el of document.querySelectorAll<HTMLElement>("[data-magnetic]")) {
+        let x = 0;
+        let y = 0;
+        if (moving) {
+          const rect = el.getBoundingClientRect();
+          const dx = event.clientX - (rect.left + rect.width / 2);
+          const dy = event.clientY - (rect.top + rect.height / 2);
+          const distance = Math.hypot(dx, dy);
+          if (distance < RADIUS) {
+            const pull = 1 - distance / RADIUS;
+            x = clamp(dx * STRENGTH * pull, MAX_SHIFT);
+            y = clamp(dy * STRENGTH * pull, MAX_SHIFT);
+          }
+        }
+        place(el, x, y);
+      }
+    },
+    { passive: true },
+  );
+
+  // When the cursor leaves the window, nothing is left pulled.
+  document.documentElement.addEventListener("mouseleave", reset);
+</script>
 
 <style>
   .button {
@@ -54,7 +117,12 @@ const {
     transition:
       background-color var(--duration-base) var(--ease-standard),
       border-color var(--duration-base) var(--ease-standard),
-      filter var(--duration-base) var(--ease-standard);
+      filter var(--duration-base) var(--ease-standard),
+      transform var(--duration-slow) var(--ease-emphasized);
+  }
+
+  .button[data-magnetic] {
+    will-change: transform;
   }
 
   .button[data-size="sm"] {
@@ -85,5 +153,12 @@ const {
     cursor: not-allowed;
     opacity: 0.5;
     filter: none;
+  }
+
+  /* Safety net: the script also skips the pull under reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .button {
+      transform: none !important;
+    }
   }
 </style>
