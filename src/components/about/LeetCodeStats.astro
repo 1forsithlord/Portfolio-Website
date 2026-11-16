@@ -1,0 +1,58 @@
+---
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+
+// Your actual LeetCode username
+const username = "TheYash07";
+
+// We pass your exact theme colors into the URL
+const leetcodeUrl = `https://leetcard.jacoblin.cool/${username}?theme=dark&font=Manrope&ext=heatmap&border=1559cb&bg=03040d&text=ffffff&color=1559cb`;
+---
+
+<section class="leetcode-stats">
+  <SectionHeader
+    level={2}
+    title="LeetCode Activity"
+    description="My algorithmic problem-solving progress and submission heatmap."
+  />
+
+  <div class="stats-grid">
+    <GlassPanel>
+      <div class="stat-wrapper">
+        <img src={leetcodeUrl} alt="LeetCode Stats and Heatmap" loading="lazy" />
+      </div>
+    </GlassPanel>
+  </div>
+</section>
+
+<style>
+  .leetcode-stats {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+
+  .stats-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .stat-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .stat-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

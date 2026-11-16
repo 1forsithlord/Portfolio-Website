@@ -1,0 +1,77 @@
+---
+import GlassPanel from "@/components/ui/GlassPanel.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import { site } from "@/content/site";
+
+// We use the Cobalt Blue (#1559cb) for the rings and fires to match your theme.
+// The background is Midnight Black (#03040d) and the borders are the subtle grey line color.
+const streakUrl = `https://github-readme-streak-stats.herokuapp.com/?user=${site.githubUsername}&theme=dark&background=03040d&border=1559cb&stroke=1559cb&ring=1559cb&fire=1559cb&currStreakNum=ffffff&sideNums=ffffff&currStreakLabel=1559cb&sideLabels=a1a1aa&dates=a1a1aa`;
+const chartUrl = `https://ghchart.rshah.org/1559cb/${site.githubUsername}`;
+---
+
+<section class="github-stats">
+  <SectionHeader
+    level={2}
+    title="GitHub Activity"
+    description="A live look at my open-source contributions and commit streaks."
+  />
+
+  <div class="stats-grid">
+    <GlassPanel>
+      <div class="stat-wrapper">
+        <img src={streakUrl} alt="GitHub Streak Stats" loading="lazy" />
+      </div>
+    </GlassPanel>
+
+    <GlassPanel>
+      <div class="stat-wrapper chart-wrapper">
+        <img src={chartUrl} alt="GitHub Contribution Graph" loading="lazy" />
+      </div>
+    </GlassPanel>
+  </div>
+</section>
+
+<style>
+  .github-stats {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-12);
+  }
+
+  .stats-grid {
+    display: grid;
+    gap: var(--space-4);
+    /* On wide screens, put them side-by-side. On mobile, stack them. */
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr 2fr;
+      align-items: center;
+    }
+  }
+
+  .stat-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .chart-wrapper {
+    overflow-x: auto;
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: none;
+  }
+
+  .chart-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

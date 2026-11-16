@@ -5,6 +5,8 @@ import Tag from "@/components/ui/Tag.astro";
 import { Terminal } from "@/components/islands/Terminal";
 import { ActivityFeed } from "@/components/islands/ActivityFeed";
 import { activity } from "@/content/activity";
+import GitHubStats from "@/components/about/GitHubStats.astro";
+import LeetCodeStats from "@/components/about/LeetCodeStats.astro";
 
 const focus = ["Machine learning", "Full-stack", "Systems"];
 ---
@@ -30,6 +32,11 @@ const focus = ["Machine learning", "Full-stack", "Systems"];
           </li>
         ))}
       </ul>
+
+      <GitHubStats />
+
+      <LeetCodeStats />
+
       <SectionHeader
         level={2}
         title="Try the terminal"
