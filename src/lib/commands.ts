@@ -43,6 +43,14 @@ export function buildCommands(): Command[] {
       external: true,
       keywords: "code repositories source",
     },
+    {
+      id: "link:email",
+      title: "Email Me",
+      group: "Links",
+      href: "mailto:yashpratapsingh321@gmail.com",
+      external: true,
+      keywords: "contact mail gmail reach out",
+    },
   ];
 
   return [...pages, ...projectCommands, ...links];

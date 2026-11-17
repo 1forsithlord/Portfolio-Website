@@ -1,55 +1,79 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import GlassPanel from "@/components/ui/GlassPanel.astro";
-import SectionHeader from "@/components/ui/SectionHeader.astro";
 import Button from "@/components/ui/Button.astro";
+import { ContactGraphic } from "@/components/islands/ContactGraphic";
 ---
 
 <BaseLayout title="Contact — Yash Pratap Singh">
-  <main>
-    <SectionHeader
-      level={1}
-      title="Get in touch"
-      description="Have a project in mind, or just want to talk shop? Send a note — I read everything that comes through here."
-    />
+  <main class="page">
+    <!-- LEFT SIDE: 3D Graphic & Intro -->
+    <div class="side-info">
+      <div class="graphic-container">
+        <ContactGraphic client:load />
+      </div>
 
-    <GlassPanel>
-      <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <!-- Your Web3Forms Access Key -->
-        <input type="hidden" name="access_key" value="c352fa8e-e91f-40ba-94dd-d0d66dd76971" />
+      <div class="intro-text">
+        <h1>Hey, I'm Yash. 👋</h1>
+        <p>
+          I build machine learning systems, full-stack apps, and interactive 3D web experiences. If you have a cool
+          project in mind, or just want to talk shop about AI and engineering, drop me a line. Let's connect.
+        </p>
+        <div class="social-links">
+          <a href="https://github.com/1forsithlord" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a href="https://linkedin.com/in/your-linkedin" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <a href="mailto:yashpratapsingh321@gmail.com">Email</a>
+        </div>
+      </div>
+    </div>
 
-        <fieldset id="form-fieldset">
-          <legend class="visually-hidden">Contact form</legend>
+    <!-- RIGHT SIDE: The Form -->
+    <div class="side-form">
+      <GlassPanel>
+        <div class="form-header">
+          <h2>Get in touch</h2>
+          <p>Fill out the form below and I'll get back to you within 24 hours.</p>
+        </div>
 
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" autocomplete="name" required />
+        <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="c352fa8e-e91f-40ba-94dd-d0d66dd76971" />
 
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" autocomplete="email" required />
+          <fieldset>
+            <legend class="visually-hidden">Contact form</legend>
 
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" autocomplete="name" required />
 
-          <!-- Honeypot anti-spam field -->
-          <input
-            type="checkbox"
-            name="botcheck"
-            class="hidden"
-            style="display: none;"
-            tabindex="-1"
-            autocomplete="off"
-          />
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required />
 
-          <div class="actions">
-            <Button id="submit-btn" variant="primary" type="submit">
-              Send message
-            </Button>
-          </div>
-        </fieldset>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
 
-        <p id="form-status" class="status" aria-live="polite"></p>
-      </form>
-    </GlassPanel>
+            <input
+              type="checkbox"
+              name="botcheck"
+              class="hidden"
+              style="display: none;"
+              tabindex="-1"
+              autocomplete="off"
+            />
+
+            <div class="actions">
+              <Button id="submit-btn" variant="primary" type="submit">
+                Send message
+              </Button>
+            </div>
+          </fieldset>
+
+          <p id="form-status" class="status" aria-live="polite"></p>
+        </form>
+      </GlassPanel>
+    </div>
   </main>
 </BaseLayout>
 
@@ -58,7 +82,6 @@ import Button from "@/components/ui/Button.astro";
   const status = document.getElementById("form-status") as HTMLParagraphElement;
   const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
 
-  // We check for submitBtn here to prevent crashes if the button is missing
   if (form && status && submitBtn) {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -85,7 +108,6 @@ import Button from "@/components/ui/Button.astro";
           status.classList.add("error");
         }
       } catch (error) {
-        // Log the actual error to the console for debugging
         console.error("Form submission failed:", error);
         status.textContent = "Something went wrong. Please check your connection and try again.";
         status.classList.add("error");
@@ -98,12 +120,85 @@ import Button from "@/components/ui/Button.astro";
 </script>
 
 <style>
-  main {
+  .page {
     display: grid;
-    gap: var(--space-6);
-    max-width: var(--measure);
+    gap: var(--space-8);
+    max-width: var(--container-max);
     margin-inline: auto;
     padding: var(--space-12) var(--space-4);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .page {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: var(--space-12);
+    }
+  }
+
+  .side-info {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .graphic-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: radial-gradient(circle at center, rgba(21, 89, 203, 0.1) 0%, transparent 70%);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .graphic-container :global(astro-island) {
+    display: block;
+    height: 100%;
+  }
+
+  .intro-text h1 {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-4);
+    color: var(--color-text);
+  }
+
+  .intro-text p {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+    font-size: var(--text-lg);
+    line-height: var(--leading-body);
+  }
+
+  .social-links {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .social-links a {
+    color: var(--color-cobalt);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--duration-base);
+  }
+
+  .social-links a:hover {
+    color: var(--color-text);
+  }
+
+  .side-form :global(.surface) {
+    padding: var(--space-6);
+  }
+
+  .form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-header h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .form-header p {
+    color: var(--color-text-muted);
   }
 
   fieldset {
@@ -128,11 +223,12 @@ import Button from "@/components/ui/Button.astro";
   input:focus,
   textarea:focus {
     outline: none;
-    border-color: var(--color-text-muted);
+    border-color: var(--color-cobalt);
   }
 
   .actions {
     justify-self: start;
+    margin-top: var(--space-2);
   }
 
   .visually-hidden {
@@ -151,10 +247,9 @@ import Button from "@/components/ui/Button.astro";
   }
 
   .status.success {
-    color: #4ade80; /* green */
+    color: #4ade80;
   }
-
   .status.error {
-    color: #f87171; /* red */
+    color: #f87171;
   }
 </style>
